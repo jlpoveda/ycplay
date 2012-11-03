@@ -2,7 +2,7 @@
 ini_set('display_errors', E_ALL);
 $searchQuery = $_GET['search_query'];
 if ($searchQuery) {
-  $url = "https://gdata.youtube.com/feeds/api/videos?q=" . urlencode($searchQuery) . "&orderby=published&start-index=11&max-results=30&v=2&alt=json";
+  $url = "https://gdata.youtube.com/feeds/api/videos?q=" . urlencode($searchQuery) . "&orderby=published&max-results=30&v=2&alt=json";
 
   $curl = curl_init($url);
   curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
@@ -54,20 +54,19 @@ if ($searchQuery) {
     </div>
 
 
-    <h1>Hello, world!</h1>
     <div class="container">
+      <h1>Hello, world!</h1>
       <div class="row">
     <?php
     if ($result) {
       foreach ($result['feed']['entry'] as $idx => $video) {
         //var_dump($video);
         //echo '<pre>' . print_r($video, true) . '</pre>';
-//        
+        $videoId = explode(':', $video['id']['$t'])[3];
         if ($idx%6 == 0) {
           echo '</div><div class="row">';
         }
         $title = $video['title']['$t'];
-        $videoId = 'test';
         echo '<div class="span2">';
         echo '<a href="watch.php?v=' . $videoId . '">';
         echo '<img src="' . $video['media$group']['media$thumbnail'][0]['url'] . '" />';

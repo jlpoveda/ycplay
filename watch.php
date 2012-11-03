@@ -1,3 +1,14 @@
+<?php
+if ($_GET['v']) {
+  $videoId = $_GET['v'];
+  $url = "http://gdata.youtube.com/feeds/api/videos/" . $videoId . "/related?v=2&alt=jsonc";
+  $curl = curl_init($url);
+  curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+  $return = curl_exec($curl);
+  curl_close($curl);
+  $result = json_decode($return, true);  
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -55,10 +66,10 @@
         </div>
         <div class="span6">
           <object width="640" height="360">
-            <param name="movie" value="https://www.youtube.com/v/Zhawgd0REhA?version=3"></param>
+            <param name="movie" value="https://www.youtube.com/v/<?php echo $videoId; ?>?version=3"></param>
             <param name="allowFullScreen" value="true"></param>
             <param name="allowScriptAccess" value="always"></param>
-            <embed src="https://www.youtube.com/v/Zhawgd0REhA?version=3" type="application/x-shockwave-flash" allowfullscreen="true" allowScriptAccess="always" width="640" height="360"></embed>
+            <embed src="https://www.youtube.com/v/<?php echo $videoId; ?>?version=3" type="application/x-shockwave-flash" allowfullscreen="true" allowScriptAccess="always" width="640" height="360"></embed>
           </object>
         </div>
         <div class="span2">
@@ -67,51 +78,24 @@
           <h1>Nxt</h1>
         </div>
       </div>
-
-      <!-- Example row of columns -->
       <div class="row">
-        <div class="span3">
-        </div>
-        <div class="span2">
-          <h2>Heading</h2>
-          <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-          <p><a class="btn" href="#">View details &raquo;</a></p>
-        </div>
-        <div class="span2">
-          <h2>Heading</h2>
-          <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-          <p><a class="btn" href="#">View details &raquo;</a></p>
-       </div>
-        <div class="span2">
-          <h2>Heading</h2>
-          <p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
-          <p><a class="btn" href="#">View details &raquo;</a></p>
-        </div>
-        <div class="span3">
-        </div>
-      </div>
 
-      <div class="row">
-        <div class="span3">
-        </div>
-        <div class="span2">
-          <h2>Heading</h2>
-          <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-          <p><a class="btn" href="#">View details &raquo;</a></p>
-        </div>
-        <div class="span2">
-          <h2>Heading</h2>
-          <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-          <p><a class="btn" href="#">View details &raquo;</a></p>
-       </div>
-        <div class="span2">
-          <h2>Heading</h2>
-          <p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
-          <p><a class="btn" href="#">View details &raquo;</a></p>
-          
-        </div>
-        <div class="span3">
-        </div>
+        <?php
+        foreach ($result['data']['items'] as $idx => $video) {
+        //var_dump($video);
+        //echo '<pre>' . print_r($video, true) . '</pre>';
+        if ($idx%6 == 0) {
+          echo '</div><div class="row">';
+        }
+        echo '<div class="span2 center">';
+        echo '<a href="watch.php?v=' . $video['id'] . '">';
+        echo '<img src="' . $video['thumbnail']['sqDefault'] . '" />';
+        echo '<h5>' . $video['title'] . '</h5>';
+        echo '</a>';
+        echo '</div>';
+
+        }
+        ?>
       </div>
 
       <hr>
