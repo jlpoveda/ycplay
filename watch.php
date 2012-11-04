@@ -8,6 +8,11 @@ if ($_GET['v']) {
   curl_close($curl);
   $result = json_decode($return, true);  
 }
+$videoIds = array();
+foreach ($result['data']['items'] as $idx => $video) {
+  $videoIds[] = $video['id'];
+}
+$nextVideoId = $videoIds[rand(0, (count($result['data']['items'])-1))];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -20,12 +25,6 @@ if ($_GET['v']) {
 
     <!-- Le styles -->
     <link href="css/bootstrap.css" rel="stylesheet">
-    <style type="text/css">
-      body {
-        padding-top: 60px;
-        padding-bottom: 40px;
-      }
-    </style>
     <link href="css/bootstrap-responsive.css" rel="stylesheet">
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
@@ -56,44 +55,39 @@ if ($_GET['v']) {
     </div>
 
     <div class="container">
-
       <!-- Main hero unit for a primary marketing message or call to action -->
-      <div class="row">
+      <div class="row" style="position: fixed; background: #FFF; border-bottom: 1px solid #BBB; padding: 50px 0 10px 0">
         <div class="span1">
           <h1>Play</h1>
         </div>
         <div class="span2">
         </div>
         <div class="span6">
-          <object width="640" height="360">
-            <param name="movie" value="https://www.youtube.com/v/<?php echo $videoId; ?>?version=3"></param>
-            <param name="allowFullScreen" value="true"></param>
-            <param name="allowScriptAccess" value="always"></param>
-            <embed src="https://www.youtube.com/v/<?php echo $videoId; ?>?version=3" type="application/x-shockwave-flash" allowfullscreen="true" allowScriptAccess="always" width="640" height="360"></embed>
-          </object>
+          <div id="player"></div>
         </div>
         <div class="span2">
         </div>
         <div class="span1">
-          <h1>Nxt</h1>
+          <h1><a href="?v=<?php echo $nextVideoId?>" id="next">Nxt</a></h1>
         </div>
       </div>
-      <div class="row">
+      <div class="row" style="padding-top: 460px">
 
         <?php
+        $videoIds = array();
         foreach ($result['data']['items'] as $idx => $video) {
-        //var_dump($video);
-        //echo '<pre>' . print_r($video, true) . '</pre>';
-        if ($idx%6 == 0) {
-          echo '</div><div class="row">';
-        }
-        echo '<div class="span2 center">';
-        echo '<a href="watch.php?v=' . $video['id'] . '">';
-        echo '<img src="' . $video['thumbnail']['sqDefault'] . '" />';
-        echo '<h5>' . $video['title'] . '</h5>';
-        echo '</a>';
-        echo '</div>';
-
+          //var_dump($video);
+          //echo '<pre>' . print_r($video, true) . '</pre>';
+          if ($idx%6 == 0) {
+            echo '</div><div class="row">';
+          }
+          echo '<div class="span2 center related_video ' . ($video['id']==$nextVideoId?'next_video':'related_video') . '">';
+          echo '<img src="' . $video['thumbnail']['sqDefault'] . '" />';
+          echo '<a href="watch.php?v=' . $video['id'] . '">';
+          echo '<h5>' . $video['title'] . '</h5>';
+          echo '</a>';
+          echo '<small>' . $video['category'] . '</small>';
+          echo '</div>';
         }
         ?>
       </div>
@@ -109,19 +103,40 @@ if ($_GET['v']) {
     <!-- Le javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="js/jquery.js"></script>
-    <script src="js/bootstrap-transition.js"></script>
-    <script src="js/bootstrap-alert.js"></script>
-    <script src="js/bootstrap-modal.js"></script>
-    <script src="js/bootstrap-dropdown.js"></script>
-    <script src="js/bootstrap-scrollspy.js"></script>
-    <script src="js/bootstrap-tab.js"></script>
-    <script src="js/bootstrap-tooltip.js"></script>
-    <script src="js/bootstrap-popover.js"></script>
-    <script src="js/bootstrap-button.js"></script>
-    <script src="js/bootstrap-collapse.js"></script>
-    <script src="js/bootstrap-carousel.js"></script>
-    <script src="js/bootstrap-typeahead.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <script src="js/bootstrap.js"></script>
+    <script>
+      // 2. This code loads the IFrame Player API code asynchronously.
+      var tag = document.createElement('script');
+      tag.src = "//www.youtube.com/iframe_api";
+      var firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
+      // 3. This function creates an <iframe> (and YouTube player)
+      //    after the API code downloads.
+      var player;
+      function onYouTubeIframeAPIReady() {
+        player = new YT.Player('player', {
+          height: '390',
+          width: '640',
+          videoId: '<?php echo $videoId?>',
+          events: {
+            'onReady': onPlayerReady,
+            'onStateChange': onPlayerStateChange
+          }
+        });
+      }
+
+      // 4. The API will call this function when the video player is ready.
+      function onPlayerReady(event) {
+        event.target.playVideo();
+      }
+
+      function onPlayerStateChange(event) {
+        if (event.data == YT.PlayerState.ENDED) {
+          window.location = $('#next').attr('href');
+        }
+      }
+    </script>
   </body>
 </html>

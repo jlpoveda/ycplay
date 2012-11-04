@@ -5891,3 +5891,11 @@ a.badge:hover {
 .affix {
   position: fixed;
 }
+
+
+.next_video {
+  background: #DDD;
+}
+.related_video {
+  text-align: center;
+}
