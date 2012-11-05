@@ -2,7 +2,7 @@
 ini_set('display_errors', E_ALL);
 $searchQuery = $_GET['search_query'];
 if ($searchQuery) {
-  $url = "https://gdata.youtube.com/feeds/api/videos?q=" . urlencode($searchQuery) . "&orderby=published&max-results=30&v=2&alt=json";
+  $url = "https://gdata.youtube.com/feeds/api/videos?q=" . urlencode($searchQuery) . "&max-results=30&v=2&alt=json";
 
   $curl = curl_init($url);
   curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
@@ -14,7 +14,7 @@ if ($searchQuery) {
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Bootstrap, from Twitter</title>
+    <title>Play - Search</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -62,7 +62,8 @@ if ($searchQuery) {
       foreach ($result['feed']['entry'] as $idx => $video) {
         //var_dump($video);
         //echo '<pre>' . print_r($video, true) . '</pre>';
-        $videoId = explode(':', $video['id']['$t'])[3];
+        $videoId = explode(':', $video['id']['$t']);
+        $videoId = $videoId[3];
         if ($idx%6 == 0) {
           echo '</div><div class="row">';
         }

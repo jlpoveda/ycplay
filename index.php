@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Bootstrap, from Twitter</title>
+    <title>Play</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -34,7 +34,7 @@
         <div class="container">
           <a class="brand" href="#">Project name</a>
           <form class="navbar-form pull-left" action="search.php" method="get">
-            <input class="span2" type="text" placeholder="Title" name="search_query" value="<?php echo $_GET['search_query']?>">
+            <input class="span2" type="text" placeholder="Title" name="search_query" value="">
             <button type="submit" class="btn">Search</button>
           </form>
         </div>
