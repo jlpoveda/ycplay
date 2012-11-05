@@ -7,6 +7,8 @@ if ($_GET['v']) {
   $return = curl_exec($curl);
   curl_close($curl);
   $result = json_decode($return, true);  
+} else {
+  header('Location: /');
 }
 $videoIds = array();
 foreach ($result['data']['items'] as $idx => $video) {
@@ -137,6 +139,13 @@ $nextVideoId = $videoIds[rand(0, (count($result['data']['items'])-1))];
           window.location = $('#next').attr('href');
         }
       }
+
+      $('.related_video img').click(function(){
+        $('.related_video').removeClass('next_video');
+        $(this).parent().addClass('next_video');
+        $('#next').attr('href', $(this).parent().find('a').attr('href'));
+      });
+
     </script>
   </body>
 </html>

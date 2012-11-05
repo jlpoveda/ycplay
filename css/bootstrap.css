@@ -5899,3 +5899,6 @@ a.badge:hover {
 .related_video {
   text-align: center;
 }
+.related_video img {
+  cursor: pointer;
+}
