@@ -1,12 +1,12 @@
 <?php
 if ($_GET['v']) {
-  $videoId = $_GET['v'];
-  $url = "http://gdata.youtube.com/feeds/api/videos/" . $videoId . "/related?v=2&alt=jsonc";
-  $curl = curl_init($url);
-  curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-  $return = curl_exec($curl);
-  curl_close($curl);
-  $result = json_decode($return, true);
+    $videoId = $_GET['v'];
+    $url = "http://gdata.youtube.com/feeds/api/videos/" . $videoId . "/related?v=2&alt=jsonc";
+    $curl = curl_init($url);
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+    $return = curl_exec($curl);
+    curl_close($curl);
+    $result = json_decode($return, true);
 
     $url = 'https://gdata.youtube.com/feeds/api/videos/' . $videoId . '?v=2&alt=jsonc';
     $curl = curl_init($url);
@@ -15,12 +15,27 @@ if ($_GET['v']) {
     curl_close($curl);
     $videoObj = json_decode($return, true);
 } else {
-  header('Location: /');
+    header('Location: /');
 }
 $videoIds = array();
 foreach ($result['data']['items'] as $idx => $video) {
-  $videoIds[] = $video['id'];
+    $videoIds[] = $video['id'];
+    $videoProbability[$idx] = $videoObj['data']['category']==$video['category']?20:1;
 }
+/*
+function normalize(&$item, $key, $param) {
+    $item = $item/$param;
+}
+
+echo 'Probabilidades: <br />';
+var_dump($videoProbability);
+array_walk($videoProbability, 'normalize', array_sum(array_values($videoProbability)));
+echo 'Probabilidades normalizadas: <br />';
+var_dump($videoProbability);
+echo 'Suma de probabilidades: <br />';
+echo array_sum($videoProbability);
+die();
+*/
 $nextVideoId = $videoIds[rand(0, (count($result['data']['items'])-1))];
 ?>
 <!DOCTYPE html>
