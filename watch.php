@@ -6,7 +6,14 @@ if ($_GET['v']) {
   curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
   $return = curl_exec($curl);
   curl_close($curl);
-  $result = json_decode($return, true);  
+  $result = json_decode($return, true);
+
+    $url = 'https://gdata.youtube.com/feeds/api/videos/' . $videoId . '?v=2&alt=jsonc';
+    $curl = curl_init($url);
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+    $return = curl_exec($curl);
+    curl_close($curl);
+    $videoObj = json_decode($return, true);
 } else {
   header('Location: /');
 }
@@ -65,6 +72,7 @@ $nextVideoId = $videoIds[rand(0, (count($result['data']['items'])-1))];
         <div class="span2">
         </div>
         <div class="span6">
+            <h4 style="text-align: center"><?php echo $videoObj['data']['title']?></h4>
           <div id="player"></div>
         </div>
         <div class="span2">
@@ -73,7 +81,7 @@ $nextVideoId = $videoIds[rand(0, (count($result['data']['items'])-1))];
           <h1><a href="?v=<?php echo $nextVideoId?>" id="next">Nxt</a></h1>
         </div>
       </div>
-      <div class="row" style="padding-top: 460px">
+      <div class="row" style="padding-top: 495px">
 
         <?php
         $videoIds = array();
