@@ -100,19 +100,19 @@ die();
     <div class="container">
       <!-- Main hero unit for a primary marketing message or call to action -->
       <div class="row" style="position: fixed; background: #FFF; border-bottom: 1px solid #BBB; padding: 50px 0 10px 0">
-        <div class="span1">
+        <div class="span2">
           <h1>Play</h1>
         </div>
-        <div class="span2">
+        <div class="span1">
         </div>
         <div class="span6">
             <h4 style="text-align: center"><?php echo $videoObj['data']['title']?></h4>
           <div id="player"></div>
         </div>
-        <div class="span2">
-        </div>
         <div class="span1">
-          <h1><a href="?v=<?php echo $nextVideoId?>" id="next">Nxt</a></h1>
+        </div>
+        <div class="span2" id="next_container">
+          <a href="?v=<?php echo $nextVideoId?>" id="next"><h5></h5><img src="/img/next_256.png" /></a>
         </div>
       </div>
       <div class="row" style="padding-top: 495px">
@@ -150,6 +150,12 @@ die();
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
     <script src="js/bootstrap.js"></script>
     <script>
+
+      $(document).ready(function(){
+        $('#next').css('background','transparent url(' + $('.next_video img').attr('src') + ') 0 0 no-repeat');
+        $('#next h5').html($('.next_video h5').html());
+      });
+
       // 2. This code loads the IFrame Player API code asynchronously.
       var tag = document.createElement('script');
       tag.src = "//www.youtube.com/iframe_api";
@@ -185,11 +191,9 @@ die();
       $('.related_video img').click(function(){
         $('.related_video').removeClass('next_video');
         $(this).parent().addClass('next_video');
-        $('#next').attr('href', $(this).parent().find('a').attr('href'));
+        $('#next').attr('href', $(this).parent().find('a').attr('href')).css('background','transparent url(' + $('.next_video img').attr('src') + ') 0 0 no-repeat');
+        $('#next h5').html($('.next_video h5').html());
       });
-
-    </script>
-    <script type="text/javascript">
 
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-3155832-7']);

@@ -5902,3 +5902,30 @@ a.badge:hover {
 .related_video img {
   cursor: pointer;
 }
+#next_container {
+  position: relative;
+}
+#next {
+  left: 0;
+  position: relative;
+  width: 120px;
+  height: 90px;
+  margin: 180px 150px 0 0;
+  display: block;
+  opacity: 0.6;
+}
+#next:hover {
+  opacity: 1;
+  text-decoration: none;
+}
+#next img {
+  position: absolute;
+  top: -15px;
+  left: 0;
+  opacity: 1;
+}
+#next h5 {
+  padding-top: 90px;
+  color: #AAA;
+  font-size: 10px;
+}

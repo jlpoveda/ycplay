@@ -58,7 +58,7 @@ if ($searchQuery) {
       <h1>Hello, world!</h1>
       <div class="row">
     <?php
-    if (count($result['feed']['entry'])) {
+    if (isset($result['feed']['entry'])) {
       foreach ($result['feed']['entry'] as $idx => $video) {
         //var_dump($video);
         //echo '<pre>' . print_r($video, true) . '</pre>';
