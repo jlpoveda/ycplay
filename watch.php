@@ -18,10 +18,29 @@ if ($_GET['v']) {
     header('Location: /');
 }
 $videoIds = array();
+$max = 0;
 foreach ($result['data']['items'] as $idx => $video) {
     $videoIds[] = $video['id'];
     $videoProbability[$idx] = $videoObj['data']['category']==$video['category']?20:1;
 }
+
+$prob = rand(0, max($videoProbability));
+$numElements = (count($result['data']['items'])-1);
+do {
+    $el = rand(0, $numElements);
+} while ($prob > $videoProbability[$el]);
+$nextVideoId = $videoIds[$el];
+/*
+echo 'Prob:';
+var_dump($prob);
+echo 'Probabilidades:';
+var_dump($videoProbability);
+echo 'el:';
+var_dump($el);
+echo 'Listado:';
+var_dump($videoIds);
+die();
+*/
 /*
 function normalize(&$item, $key, $param) {
     $item = $item/$param;
@@ -36,7 +55,7 @@ echo 'Suma de probabilidades: <br />';
 echo array_sum($videoProbability);
 die();
 */
-$nextVideoId = $videoIds[rand(0, (count($result['data']['items'])-1))];
+//$nextVideoId = $videoIds[rand(0, (count($result['data']['items'])-1))];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -88,6 +107,7 @@ $nextVideoId = $videoIds[rand(0, (count($result['data']['items'])-1))];
         </div>
         <div class="span6">
             <h4 style="text-align: center"><?php echo $videoObj['data']['title']?></h4>
+            <p><?php echo $videoObj['data']['category']?></p>
           <div id="player"></div>
         </div>
         <div class="span2">
