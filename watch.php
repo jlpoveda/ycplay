@@ -107,7 +107,6 @@ die();
         </div>
         <div class="span6">
             <h4 style="text-align: center"><?php echo $videoObj['data']['title']?></h4>
-            <p><?php echo $videoObj['data']['category']?></p>
           <div id="player"></div>
         </div>
         <div class="span2">
