@@ -276,7 +276,7 @@ die();
         $('.carousel').carousel({interval: 5000}).carousel('pause').carousel('next');
         $('#search_form').submit(function(){
           if ($('#search_query').val()) {
-            $('#search-result img').fadeOut();
+            $('#search-result a').fadeOut().html(' ');
           $.ajax({
             type: "GET",
             url: "ajaxsearch.php",
@@ -284,7 +284,7 @@ die();
             data: { search_query: $('#search_query').val() }
           }).done(function( result ) {
             jQuery.each(result, function(){
-              $('#search-result').animate({height: 90}).append('<a href="' + this.id + '"><span>' + this.title + '<img src="' + this.thumb + '" ></a>');
+              $('#search-result').animate({height: 90}).append('<a href="' + this.id + '"><span>' + this.title + '</span><img src="' + this.thumb + '" ></a>');
             });
           });
           }
