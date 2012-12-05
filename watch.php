@@ -211,7 +211,7 @@ die();
       <!-- Main hero unit for a primary marketing message or call to action -->
       <div class="row" style="position: fixed; background: #FFF; border-bottom: 1px solid #BBB; padding: 50px 0 10px 0">
         <div class="span2">
-        <h1><img src="img/logo.gif" alt="Logo" /></h1>
+        <h1 style="display:none"><img src="img/logo.gif" alt="Logo" /></h1>
         </div>
         <div class="span1">
         </div>
@@ -225,17 +225,19 @@ die();
           <a href="?v=<?php echo $nextVideoId?>" id="next"><h5></h5><img src="img/next_256_white.png" /></a>
         </div>
       </div>
-      <div class="row" style="padding-top: 495px">
-
+      <div id="myCarousel" class="carousel" style="margin-top: 495px">
+        <div class="carousel-inner">
+        <div class="item">
         <?php
         $videoIds = array();
         foreach ($result['data']['items'] as $idx => $video) {
           //var_dump($video);
           //echo '<pre>' . print_r($video, true) . '</pre>';
-          if ($idx%6 == 0) {
-            echo '</div><div class="row">';
+          if ($idx != 0 && $idx%7 == 0) {
+            echo '</div><div class="item">';
           }
-          echo '<div class="span2 center related_video ' . ($video['id']==$nextVideoId?'next_video':'related_video') . '">';
+//          echo '<div class="span2 center related_video ' . ($video['id']==$nextVideoId?'next_video':'related_video') . '">';
+          echo '<div class="center related_video ' . ($video['id']==$nextVideoId?'next_video':'related_video') . '" style="float: left; width: 150px">';
           echo '<img src="' . $video['thumbnail']['sqDefault'] . '" />';
           echo '<a href="watch.php?v=' . $video['id'] . '">';
           echo '<h5>' . $video['title'] . '</h5>';
@@ -244,7 +246,11 @@ die();
           echo '<span style="font-size:7px">' . $videoProbability[$idx] . '<span style="font-size:4px">';
           echo '</div>';
         }
+          echo '</div>';
         ?>
+        </div>
+          <a class="carousel-control left" href="#myCarousel" data-slide="prev">&lsaquo;</a>
+          <a class="carousel-control right" href="#myCarousel" data-slide="next">&rsaquo;</a>        
       </div>
 
       <hr>
@@ -265,6 +271,7 @@ die();
       $(document).ready(function(){
         $('#next').css('background','transparent url(' + $('.next_video img').attr('src') + ') 0 0 no-repeat');
         $('#next h5').html($('.next_video h5').html());
+        $('.carousel').carousel({interval: 5000}).carousel('pause').carousel('next');
       });
 
       // 2. This code loads the IFrame Player API code asynchronously.

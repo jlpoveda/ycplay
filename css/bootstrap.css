@@ -5929,3 +5929,10 @@ a.badge:hover {
   color: #AAA;
   font-size: 10px;
 }
+#myCarousel {
+  position: absolute;
+  bottom: 0;
+  width: 90%;
+  padding-left: 5%;
+  left: 2%
+}
