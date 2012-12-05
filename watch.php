@@ -195,12 +195,14 @@ die();
   </head>
 
   <body>
+    <div id="search-result" style="background: #000; overflow: hidden"></div>
 
-    <div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar navbar-inverse">
       <div class="navbar-inner">
         <div class="container">
-            <a class="brand" href="#" style="position: relative; padding-left: 38px"><img src="img/minilogo.png" alt="" style="height: 18px; position: absolute; left: 0; top: 11px;" /> infinitube</a>          <form class="navbar-form pull-left" action="search.php" method="get">
-            <input class="span2" type="text" placeholder="Title" name="search_query">
+            <a class="brand" href="#" style="position: relative; padding-left: 38px"><img src="img/minilogo.png" alt="" style="height: 18px; position: absolute; left: 0; top: 11px;" /> infinitube</a>          
+          <form class="navbar-form pull-left" action="search.php" method="get" id="search_form">
+            <input class="span2" type="text" placeholder="Title" name="search_query" id="search_query" >
             <button type="submit" class="btn">Search</button>
           </form>
         </div>
@@ -272,6 +274,24 @@ die();
         $('#next').css('background','transparent url(' + $('.next_video img').attr('src') + ') 0 0 no-repeat');
         $('#next h5').html($('.next_video h5').html());
         $('.carousel').carousel({interval: 5000}).carousel('pause').carousel('next');
+        $('#search_form').submit(function(){
+          if ($('#search_query').val()) {
+            $('#search-result img').fadeOut();
+          $.ajax({
+            type: "GET",
+            url: "ajaxsearch.php",
+            dataType: "json",
+            data: { search_query: $('#search_query').val() }
+          }).done(function( result ) {
+            jQuery.each(result, function(){
+              $('#search-result').animate({height: 90}).append('<img src="' + this.thumb + '" > ');
+            });
+          });
+          }
+          return false;
+        });
+            
+
       });
 
       // 2. This code loads the IFrame Player API code asynchronously.
