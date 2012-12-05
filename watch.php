@@ -284,7 +284,7 @@ die();
             data: { search_query: $('#search_query').val() }
           }).done(function( result ) {
             jQuery.each(result, function(){
-              $('#search-result').animate({height: 90}).append('<img src="' + this.thumb + '" > ');
+              $('#search-result').animate({height: 90}).append('<a href="' + this.id + '"><span>' + this.title + '<img src="' + this.thumb + '" ></a>');
             });
           });
           }
