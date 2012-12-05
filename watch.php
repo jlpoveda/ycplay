@@ -199,8 +199,7 @@ die();
     <div class="navbar navbar-inverse navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container">
-          <a class="brand" href="#">Project name</a>
-          <form class="navbar-form pull-left" action="search.php" method="get">
+            <a class="brand" href="#" style="position: relative; padding-left: 38px"><img src="img/minilogo.png" alt="" style="height: 18px; position: absolute; left: 0; top: 11px;" /> infinitube</a>          <form class="navbar-form pull-left" action="search.php" method="get">
             <input class="span2" type="text" placeholder="Title" name="search_query">
             <button type="submit" class="btn">Search</button>
           </form>
@@ -212,7 +211,7 @@ die();
       <!-- Main hero unit for a primary marketing message or call to action -->
       <div class="row" style="position: fixed; background: #FFF; border-bottom: 1px solid #BBB; padding: 50px 0 10px 0">
         <div class="span2">
-          <h1>Play</h1>
+        <h1><img src="img/logo.gif" alt="Logo" /></h1>
         </div>
         <div class="span1">
         </div>
