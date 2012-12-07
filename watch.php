@@ -118,9 +118,9 @@ Y estos son los datos que puedo extraer del video que suena
 
 
     // Si es la misma categoría
-    $videoProbability[$idx] += $videoObj['data']['category']==$video['category']?10:0;
+    $videoProbability[$idx] += $videoObj['data']['category']==$video['category']?20:0;
     // Si el uploader es el mismo, más probabilidades
-    $videoProbability[$idx] += $videoObj['data']['uploader']==$video['uploader']?5:0;
+    $videoProbability[$idx] += $videoObj['data']['uploader']==$video['uploader']?9:0;
     // Si la duración del vídeo es +-30% que la del original, más probabilidad
     // Esto es para que de repente no salga una sesión larga cuando estás
     // escuchando canciones
@@ -142,6 +142,9 @@ do {
     $el = rand(0, $numElements);
 } while ($prob > $videoProbability[$el]);
 $nextVideoId = $videoIds[$el];
+
+arsort($videoProbability);
+
 /*
 echo 'Prob:';
 var_dump($prob);
@@ -212,10 +215,9 @@ die();
     <div class="container">
       <!-- Main hero unit for a primary marketing message or call to action -->
       <div class="row" style="position: fixed; background: #FFF; border-bottom: 1px solid #BBB; padding: 50px 0 10px 0">
-        <div class="span2">
+        <div class="span3">
         <h1 style="display:none"><img src="img/logo.gif" alt="Logo" /></h1>
-        </div>
-        <div class="span1">
+          <ul id="history"></ul>
         </div>
         <div class="span6">
             <h4 style="text-align: center"><?php echo $videoObj['data']['title']?></h4>
@@ -232,10 +234,14 @@ die();
         <div class="item">
         <?php
         $videoIds = array();
-        foreach ($result['data']['items'] as $idx => $video) {
+//        foreach ($result['data']['items'] as $idx => $video) {
+        $i = 0;
+        foreach ($videoProbability as $idx => $probabililty) {
+
+          $video = $result['data']['items'][$idx];
           //var_dump($video);
           //echo '<pre>' . print_r($video, true) . '</pre>';
-          if ($idx != 0 && $idx%7 == 0) {
+          if ($i != 0 && $i%7 == 0) {
             echo '</div><div class="item">';
           }
 //          echo '<div class="span2 center related_video ' . ($video['id']==$nextVideoId?'next_video':'related_video') . '">';
@@ -247,6 +253,7 @@ die();
           echo '<span style="font-size:7px">' . $video['category'] . '<span style="font-size:4px"> ';
           echo '<span style="font-size:7px">' . $videoProbability[$idx] . '<span style="font-size:4px">';
           echo '</div>';
+          ++$i; 
         }
           echo '</div>';
         ?>
@@ -268,7 +275,52 @@ die();
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
     <script src="js/bootstrap.js"></script>
+    <script src="js/mustache.js"></script>
+    <script src="js/ixDbEz.js"></script> 
     <script>
+
+ var ixdbDDL = (
+   function () {
+        //Create an IndexedDB ObjectStore (a Table) and Indexes via ixDbEz 
+        ixDbEz.createObjStore('history', 'id', false);
+   }
+ );
+
+ window.db = ixDbEz.startDB('infinitubedb', 1, ixdbDDL);
+
+
+
+      var video_item = '<li class="video-item">\
+      <img class="video-item-thumb" src="{{thumb}}" />\
+      <a class="video-item-add" href="#add">Add to playlist</a>\
+      <span class="video-item-duration">{{duration}}</span>\
+      <a class="video-item-play" href="watch.php?v={{id}}">{{title}}</a>\
+      </li>';
+
+      var history_list_item = '<li><a href="watch.php?v={{id}}">{{title}}</a></li>'
+
+      function printHistory(ixDbCursorReq) {
+
+        ixDbCursorReq.onsuccess = function (e) {
+            var cursor = ixDbCursorReq.result || e.result;    
+
+            if (cursor) {
+              $('#history').append(Mustache.render(history_list_item, cursor.value));  
+              while(cursor.continue()) {
+                $('#history').append(Mustache.render(history_list_item, cursor.value));  
+              }
+            }
+        };
+/*
+          $('#history-list').append(Mustache.render(history_list_item, {title: this.title, id: this.id}));
+
+*/        
+      }
+      
+      function readError(e) {
+        console.log(e);
+      }
+
 
       $(document).ready(function(){
         $('#next').css('background','transparent url(' + $('.next_video img').attr('src') + ') 0 0 no-repeat');
@@ -276,7 +328,7 @@ die();
         $('.carousel').carousel({interval: 5000}).carousel('pause').carousel('next');
         $('#search_form').submit(function(){
           if ($('#search_query').val()) {
-            $('#search-result a').fadeOut().html(' ');
+            $('#search-result').fadeOut().html(' ');
           $.ajax({
             type: "GET",
             url: "ajaxsearch.php",
@@ -284,14 +336,27 @@ die();
             data: { search_query: $('#search_query').val() }
           }).done(function( result ) {
             jQuery.each(result, function(){
-              $('#search-result').animate({height: 90}).append('<a href="watch.php?v=' + this.id + '"><span>' + this.title + '</span><img src="' + this.thumb + '" ></a>');
+              video_item_data = {
+                thumb: this.thumb,
+                id: this.id,
+                title: this.title,
+                duration: this.duration
+              }
+              $('#search-result').show().animate({height: 100}).prepend(Mustache.render(video_item, video_item_data));
             });
           });
           }
           return false;
         });
-            
 
+        //var keyRangeObj = IDBKeyRange.upperBound("10");
+        ixDbEz.getCursor("history", printHistory, readError);
+        //ixDbEz.getCursor("history", printHistory, readError, keyRangeObj);
+
+        ixDbEz.add('history', {
+              id: '<?php echo $videoId?>',
+              title: '<?php echo addslashes($videoObj['data']['title'])?>'
+        });     
       });
 
       // 2. This code loads the IFrame Player API code asynchronously.
@@ -304,6 +369,7 @@ die();
       //    after the API code downloads.
       var player;
       function onYouTubeIframeAPIReady() {
+        return false;
         player = new YT.Player('player', {
           height: '390',
           width: '640',
@@ -324,6 +390,18 @@ die();
         if (event.data == YT.PlayerState.ENDED) {
           window.location = $('#next').attr('href');
         }
+      }
+
+      function playYoutubeVideo($video_id) {
+        player = new YT.Player('player', {
+          height: '390',
+          width: '640',
+          videoId: $video_id,
+          events: {
+            'onReady': onPlayerReady,
+            'onStateChange': onPlayerStateChange
+          }
+        });
       }
 
       $('.related_video img').click(function(){

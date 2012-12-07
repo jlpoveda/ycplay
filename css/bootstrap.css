@@ -5936,16 +5936,15 @@ a.badge:hover {
   padding-left: 5%;
   left: 2%
 }
-#search-result a {
-  width: 120px;
-  margin-right: 5px;
+#search-result {
+  list-style: none;
 }
-#search-result a img {
-  display: block;
+.video-item {
   float: left;
-}
-#search-result a span {
   width: 120px;
-  color: #FFF;
-  position: absolute;
+  margin-right: 3px;
+  padding: 3px 6px 6px 6px;
+}
+.video-item-thumb {
+  width: 117px;
 }
