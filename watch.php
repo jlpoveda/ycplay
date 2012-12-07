@@ -215,9 +215,9 @@ die();
     <div class="container">
       <!-- Main hero unit for a primary marketing message or call to action -->
       <div class="row" style="position: fixed; background: #FFF; border-bottom: 1px solid #BBB; padding: 50px 0 10px 0">
-        <div class="span3">
+        <div class="span3" id="history-list">
         <h1 style="display:none"><img src="img/logo.gif" alt="Logo" /></h1>
-          <ul id="history"></ul>
+          <ul id="history" class="nav nav-tabs nav-stacked"></ul>
         </div>
         <div class="span6">
             <h4 style="text-align: center"><?php echo $videoObj['data']['title']?></h4>

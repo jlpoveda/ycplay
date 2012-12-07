@@ -5948,3 +5948,7 @@ a.badge:hover {
 .video-item-thumb {
   width: 117px;
 }
+#history-list {
+  max-height: 434px;
+  overflow: auto;
+}
