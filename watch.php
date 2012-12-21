@@ -282,11 +282,12 @@ die();
  var ixdbDDL = (
    function () {
         //Create an IndexedDB ObjectStore (a Table) and Indexes via ixDbEz 
-        ixDbEz.createObjStore('history', 'id', false);
+        ixDbEz.createObjStore('history', 'created_at', false);
+        ixDbEz.createIndex('history', 'createdAtIdx', 'created_at', false);
    }
  );
 
- window.db = ixDbEz.startDB('infinitubedb', 1, ixdbDDL);
+ window.db = ixDbEz.startDB('infinitubedb', 3, ixdbDDL);
 
 
 
@@ -305,9 +306,9 @@ die();
             var cursor = ixDbCursorReq.result || e.result;    
 
             if (cursor) {
-              $('#history').append(Mustache.render(history_list_item, cursor.value));  
+              $('#history').prepend(Mustache.render(history_list_item, cursor.value));  
               while(cursor.continue()) {
-                $('#history').append(Mustache.render(history_list_item, cursor.value));  
+                $('#history').prepend(Mustache.render(history_list_item, cursor.value));  
               }
             }
         };
@@ -350,12 +351,13 @@ die();
         });
 
         //var keyRangeObj = IDBKeyRange.upperBound("10");
-        ixDbEz.getCursor("history", printHistory, readError);
+        ixDbEz.getCursor("history", printHistory, readError, '', '', 'createdAtIdx');
         //ixDbEz.getCursor("history", printHistory, readError, keyRangeObj);
 
         ixDbEz.add('history', {
               id: '<?php echo $videoId?>',
-              title: '<?php echo addslashes($videoObj['data']['title'])?>'
+              title: '<?php echo addslashes($videoObj['data']['title'])?>',
+              created_at: '<?php echo time()?>'
         });     
       });
 
