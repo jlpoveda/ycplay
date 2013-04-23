@@ -135,7 +135,7 @@ h1 {
 small {
   font-size: 10px !important;
 }
-#playlistcontainer {
+ .tab-pane-tool {
   height: 260px;
   overflow: auto;
 }
@@ -146,9 +146,9 @@ small {
 #playlisttable tr{
   cursor: move;
 }
-.playlist-trash{
+.playlist-trash,.playlist-play{
   cursor:pointer;
 }
-.playlist-trash:hover{
+.playlist-trash:hover,.playlist-play:hover{
   opacity:.7;
 }

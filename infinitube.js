@@ -6,6 +6,7 @@ var currentVideoId = '';
 var videoItems = {};
 var currentVideo = {};
 var playlistObjects = [];
+var favObjects = [];
 var xhrWorking = false;
 var ytplayer = '';
 
@@ -16,13 +17,19 @@ function _run(){
         if(countPlaylistItems() > 1){
             $(this).parent().parent().fadeOut('fast',function(){$(this).remove();savePlaylist();});
         }
+    }).on('click', '.playlist-play', function(event){
+        var id=$(this).parent().parent().attr('id').substring(1);
+        var title=$(this).parent().parent().find('small').html();
+        goVideo(id, title);
     });
     $('#formsearch').submit(function(){
         return false;
     })
     $( "#playlisttable" ).sortable();
     $( "#playlisttable" ).disableSelection();
+
     _initPlaylist();
+    _initFavlist();
 }
 function countPlaylistItems(){
     return $('#playlisttable tr').length;
@@ -48,6 +55,30 @@ function getPlaylist(){
     var playlist=localStorage.getItem('playlist');
     return JSON.parse(playlist);
 }
+function getFavlist(){
+    var playlist=localStorage.getItem('fav');
+    return JSON.parse(playlist);
+}
+function saveFav(){
+    localStorage.setItem('fav', favToJson());
+    favObjects=[];
+}
+function favToJson(){
+    var fav=$('#favlisttable tr');
+    var array=[];
+    $.each(fav, function(){
+        array.push({'id': $(this).attr('id').substring(1), 'title':$(this).find('small').html()});
+    });
+    return JSON.stringify(array);
+}
+function _initFavlist(){
+    var items=getFavlist();
+    if(items.length>0){
+        $.each(items, function(){
+            addToFav(this.id, this.title);
+        });
+    }
+}
 function _initPlaylist(){
     var items=getPlaylist();
     if(items.length>0){
@@ -56,9 +87,24 @@ function _initPlaylist(){
         });
     }
 }
+function addToFav(videoId, title){
+    if(videoId==''){
+        videoId=currentVideo.id;
+    }
+    if(title==''){
+        title=currentVideo.title;
+    }
+    favObjects.push({'id':videoId,'title':title});
+    var str='<tr id="f'+videoId+'"><td><img src="http://i.ytimg.com/vi/'+videoId+'/default.jpg" class="minithumb" /></td><td><small>'+title+'</small></td><td><i class="playlist-trash icon-trash"></i><i class="icon-play playlist-play"></i></td></tr>';
+//    $('#f'+currentVideoId).remove();
+    $('#favlisttable').html($('#favlisttable').html()+str);
+
+    console.log($('#favlisttable'));
+    saveFav();
+}
 function addToPlaylist(videoId, title){
     playlistObjects.push({'id':videoId,'title':title});
-    var str='<tr id="r'+videoId+'"><td><img src="http://i.ytimg.com/vi/'+videoId+'/default.jpg" class="minithumb" /></td><td><small>'+title+'</small></td><td><i class="playlist-trash icon-trash"></i><i class="icon-play"></i></td></tr>';
+    var str='<tr id="r'+videoId+'"><td><img src="http://i.ytimg.com/vi/'+videoId+'/default.jpg" class="minithumb" /></td><td><small>'+title+'</small></td><td><i class="playlist-trash icon-trash"></i><i class="icon-play playlist-play"></i></td></tr>';
     $('#r'+currentVideoId).remove();
     $('#playlisttable').html($('#playlisttable').html()+str);
     savePlaylist();
@@ -129,22 +175,27 @@ function onPlayerStateChange(newState){
 }
 function goNextVideo(){
     var id=$('#playlisttable tr').first().attr('id').substring(1);
-    loadAndPlayVideo(id);
+    var title=$('#playlisttable tr').first().find('small').html();
+
+    History.pushState({'id':id,'Title':title},title,'?v='+id);
+}
+function goVideo(videoId, title){
+    History.pushState({'id':videoId,'Title':title},title,'?v='+videoId);
 }
 
 function goPrevVideo(){
-	if(currentPlaylistPos==0){
-		return;
-	}
-	goVid(currentPlaylistPos-1,currentPlaylistPage);
-}
-function goVid(playlistPos,playlistPage){
-	// if(playlistPage!=currentPlaylistPage){
-	// 	currentPlaylistPage=playlistPage;
+	// if(currentPlaylistPos==0){
 	// 	return;
 	// }
-	loadAndPlayVideo(playlistArr[playlistPage][playlistPos].id);
+	// goVid(currentPlaylistPos-1,currentPlaylistPage);
 }
+// function goVid(playlistPos,playlistPage){
+// 	// if(playlistPage!=currentPlaylistPage){
+// 	// 	currentPlaylistPage=playlistPage;
+// 	// 	return;
+// 	// }
+// 	loadAndPlayVideo(playlistArr[playlistPage][playlistPos].id);
+// }
 function doSearch(){
     if(xhrWorking){
         pendingSearch=true;
@@ -333,7 +384,7 @@ function updateVideoDisplay(videos){
 
     var relatedVideos = '<ul class="inline unstyled related">';
     for(var i=0;i<numThumbs;i++){
-        var tmp='<li id="a'+videos[i].id+'" class="span2 relatedvideos"><img src="' + videos[i].thumbnail.sqDefault + '"><div class="relatedvideosactions"><a href="javascript:loadAndPlayVideo(\''+videos[i].id+'\')"><i class="icon-play"></i></a><a href="javascript:setNextVideo(\''+videos[i].id+'\')"><i class="icon-plus"></i></a></div><ul class="unstyled videoinfo"><li class="pagination-centered videoinfotitle">' + videos[i].title + '</li><li class="hidden">' + videos[i].category + '</li></ul></li>';
+        var tmp='<li id="a'+videos[i].id+'" class="span2 relatedvideos"><img src="' + videos[i].thumbnail.sqDefault + '"><div class="relatedvideosactions"><a href="javascript:goVideo(\''+videos[i].id+'\',\''+videos[i].title+'\')"><i class="icon-play"></i></a><a href="javascript:setNextVideo(\''+videos[i].id+'\')"><i class="icon-plus"></i></a></div><ul class="unstyled videoinfo"><li class="pagination-centered videoinfotitle">' + videos[i].title + '</li><li class="hidden">' + videos[i].category + '</li></ul></li>';
         relatedVideos = relatedVideos + tmp;
     }
     relatedVideos = relatedVideos + '</ul>';
@@ -458,7 +509,7 @@ function loadAndPlayVideo(videoId,bypassXhrWorkingCheck){
         currentVideoId=videoId;
         pendingDoneWorking=true;
     }
-    updateHash('v='+videoId);
+//    updateHash('v='+videoId);
     $('#embedUrl').val('<object width="640" height="385"><param name="movie" value="http://www.youtube.com/v/'+currentVideoId+'?fs=1&hl=en_US"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/'+currentVideoId+'?fs=1&hl=en_US" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="640" height="385"></embed></object>');
     getRelatedVideos(videoId);
 }
@@ -521,6 +572,10 @@ function stripVowelAccent(str) {
     return str;
 }
 
+window.onstatechange = function() {
+    loadAndPlayVideo(History.getState().data['id']);
+}
+
 google.setOnLoadCallback(_run);
 
 /*
@@ -539,4 +594,11 @@ History.back();
 
 Eventos del storage
 http://html5demos.com/storage-events
+
+==============
+
+Modificación del favicon
+$("#favicon").attr("href","favicon.png");
+$("#favicon").attr("href","favicon.ico");
+
 */

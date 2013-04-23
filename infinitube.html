@@ -15,7 +15,7 @@
     <meta property="fb:admins" content="asdfasdfa"/>
     <meta property="og:description" content="Infinite YouTube watching."/>
 
-    <link href="/favicon.ico" rel="icon" type="image/x-icon" />
+    <link id="favicon" href="favicon.ico" rel="icon" type="image/x-icon" />
     <!--<link rel="stylesheet" type="text/css" href="/style_min.css" />-->
     <script src="http://www.google.com/jsapi" type="text/javascript"></script>
     <script src="infinitube.js" type="text/javascript"></script>
@@ -49,14 +49,14 @@
         <div class="tabbable">
           <ul class="nav nav-tabs">
             <li class="active"><a href="#playlistcontainer" data-toggle="tab">Playlist</a></li>
-            <li><a href="#favlistcontainter" data-toggle="tab">Favs</a></li>
+            <li><a href="#favlistcontainer" data-toggle="tab">Favs</a></li>
           </ul>
           <div class="tab-content">
-            <div class="tab-pane active" id="playlistcontainer">
+            <div class="tab-pane active tab-pane-tool" id="playlistcontainer">
               <table class="table table-striped" id="playlisttable">
               </table>        
             </div>            
-            <div class="tab-pane" id="favlistcontainer">
+            <div class="tab-pane tab-pane-tool" id="favlistcontainer">
               <table class="table table-striped" id="favlisttable">
               </table>        
             </div>            
@@ -72,8 +72,8 @@
  -->        
         <div class="btn-toolbar">
           <div class="btn-group">
-            <a class="btn" href="#"><i class="icon-step-backward"></i></a>
-            <!-- <a class="btn" href="#"><i class="icon-heart"></i></a> -->
+            <a class="btn" href="javascript:History.back()"><i class="icon-step-backward"></i></a>
+            <a class="btn" href="javascript:addToFav('','')"><i class="icon-heart"></i></a>
             <a class="btn" href="javascript:playPause()"><i class="icon-play toolPlayPause"></i></a>
             <a class="btn" href="javascript:goNextVideo()"><i class="icon-step-forward"></i></a>
           </div>
