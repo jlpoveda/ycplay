@@ -136,12 +136,14 @@ small {
   font-size: 10px !important;
 }
  .tab-pane-tool {
-  height: 260px;
+  height: 249px;
   overflow: auto;
 }
 #videoData {
   height: 80px;
   overflow: hidden;
+  color: #464646;
+  text-align: center;
 }
 #playlisttable tr{
   cursor: move;
@@ -151,4 +153,10 @@ small {
 }
 .playlist-trash:hover,.playlist-play:hover{
   opacity:.7;
+}
+.btn-toolbar {
+  margin-left: 30px;
+}
+#ytvideo object {
+  margin-left: 8px;
 }

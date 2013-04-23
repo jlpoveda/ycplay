@@ -119,7 +119,12 @@ function onYouTubePlayerReady(playerId){
 	$('#embedUrl').click(function(e){
 		$(this).select();
 	});
-	if(window.location.hash){
+    if(location.search){
+        var search = location.search;
+        if(search.substring(0,3)=='?v='){
+            loadAndPlayVideo(search.substring(3));
+        }
+    }else if(window.location.hash){
         var h = getHash();
         if(h.substring(0,1)=='v'){
             loadAndPlayVideo(h.substring(2));
@@ -127,8 +132,8 @@ function onYouTubePlayerReady(playerId){
             $('#searchBox').val(h.substring(2)).focus();
             doSearch();
         }
-	}else{
-		var defaultSearches=['Parov Stelar', 'Paul Kalkbrenner'];
+    }else{
+		var defaultSearches=['Parov Stelar', 'Paul Kalkbrenner', 'Peer Kusiv'];
 		var randomNumber=Math.floor(Math.random()*defaultSearches.length);
 		$('#searchBox').val(defaultSearches[randomNumber]).select().focus();
 	}
