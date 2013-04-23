@@ -35,15 +35,21 @@ function countPlaylistItems(){
     return $('#playlisttable tr').length;
 }
 function loadPlayer(){
-    currentVideoId='_2c5Fh3kfrI';
+    currentVideoId='wcv3v6XfEvM';
     var params={allowScriptAccess:"always"};
     var atts={id:"ytPlayer",allowFullScreen:"true"};
     swfobject.embedSWF("http://www.youtube.com/v/"+currentVideoId+"&enablejsapi=1&playerapiid=ytplayer"+"&rel=0&autoplay=0&egm=0&loop=0&fs=1&hd=0&showsearch=0&showinfo=0&iv_load_policy=3&cc_load_policy=1","innerVideoDiv","700","420","8",null,null,params,atts);
 }
 function playlistToJson(){
-    var playlist=$('#playlisttable tr');
+    return listToJson('playlisttable');
+}
+function favToJson(){
+    return listToJson('favlisttable');
+}
+function listToJson(element){
+    var items=$('#'+element+' tr');
     var array=[];
-    $.each(playlist, function(){
+    $.each(items, function(){
         array.push({'id': $(this).attr('id').substring(1), 'title':$(this).find('small').html()});
     });
     return JSON.stringify(array);
@@ -62,14 +68,6 @@ function getFavlist(){
 function saveFav(){
     localStorage.setItem('fav', favToJson());
     favObjects=[];
-}
-function favToJson(){
-    var fav=$('#favlisttable tr');
-    var array=[];
-    $.each(fav, function(){
-        array.push({'id': $(this).attr('id').substring(1), 'title':$(this).find('small').html()});
-    });
-    return JSON.stringify(array);
 }
 function _initFavlist(){
     var items=getFavlist();
@@ -98,8 +96,6 @@ function addToFav(videoId, title){
     var str='<tr id="f'+videoId+'"><td><img src="http://i.ytimg.com/vi/'+videoId+'/default.jpg" class="minithumb" /></td><td><small>'+title+'</small></td><td><i class="playlist-trash icon-trash"></i><i class="icon-play playlist-play"></i></td></tr>';
 //    $('#f'+currentVideoId).remove();
     $('#favlisttable').html($('#favlisttable').html()+str);
-
-    console.log($('#favlisttable'));
     saveFav();
 }
 function addToPlaylist(videoId, title){
@@ -125,7 +121,6 @@ function onYouTubePlayerReady(playerId){
 	});
 	if(window.location.hash){
         var h = getHash();
-        console.log(h);
         if(h.substring(0,1)=='v'){
             loadAndPlayVideo(h.substring(2));
         }else if(h.substring(0,1)=='s'){
@@ -279,7 +274,6 @@ function getRelatedArtists(artist){
     });
 }
 function selectNextMusicVideo(lastfmData, artist){
-    console.log('MusicVideo');
     var numItems=videoItems.length;
     var lastfmArtists={};
     var numLastfmItems=lastfmData.similarartists.artist.length;
@@ -325,8 +319,6 @@ function selectNextMusicVideo(lastfmData, artist){
             maxProb=prob;
         }
     }
-    // console.log(videosTmp);
-    // console.log(lastfmArtists);
     rndProb=Math.floor((Math.random()*maxProb)+1);
     i=0;
     do {
@@ -334,9 +326,6 @@ function selectNextMusicVideo(lastfmData, artist){
         i++;
     }while(videosTmp[rndItem].prob<rndProb || i<60);
     addToPlaylist(videosTmp[rndItem].id,videosTmp[rndItem].title);
-    console.log("maxProb:"+maxProb);
-    console.log(rndItem+' --- '+rndProb);
-    console.log(videosTmp[rndItem]);
 }
 function selectNextVideo(videos, currentVideoInfo){
     currentVideo=currentVideoInfo;
@@ -345,7 +334,6 @@ function selectNextVideo(videos, currentVideoInfo){
         getRelatedArtists(currentVideoTitle[0].trim());
         return;
     }
-    console.log('AnotherVideo');
     var numItems=videoItems.length;
     var prob=0;
     var tmp=0;
@@ -355,9 +343,7 @@ function selectNextVideo(videos, currentVideoInfo){
     var maxProb = 0;
     var rndProb = 0;
     var match=0;
-    console.log(currentVideo.category);
     for(i=0; i<numItems; i++){
-        console.log(videoItems[i].category);
         prob=0;
         if(currentVideo.category==videoItems[i].category){
             prob+=10;
@@ -375,9 +361,6 @@ function selectNextVideo(videos, currentVideoInfo){
     }while(videosTmp[rndItem].prob<rndProb || i<60);
     //$('#a'+videosTmp[rndItem].id).addClass('nextVideo');
     addToPlaylist(videosTmp[rndItem].id,videosTmp[rndItem].title);
-    console.log(maxProb);
-    console.log(rndItem+' --- '+rndProb);
-    console.log(videosTmp[rndItem]);
 }
 function updateVideoDisplay(videos){
     var numThumbs=(videos.length>=INITIAL_VID_THUMBS)?INITIAL_VID_THUMBS:videos.length;
