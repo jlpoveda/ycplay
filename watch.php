@@ -17,40 +17,11 @@ if ($_GET['v']) {
 } else {
     header('Location: /');
 }
-
-// Si la categoría es Music, empezamos el proceso de Last.fm
-if ($videoObj['data']['category'] == 'Music') {
-  $aux = explode('-', $videoObj['data']['title']);
-  $artist = trim($aux[0]);
-
-  $url = 'http://ws.audioscrobbler.com/2.0/?method=artist.getsimilar&artist=' . urlencode($artist) . '&api_key=595b427b9ceb5defce2b51a1dc21258b&format=json';
-  $curl = curl_init($url);
-  curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-  $return = curl_exec($curl);
-  curl_close($curl);
-  $lastfm = json_decode($return, true);
-
-  $lastfm_artist = array();
-  $lastfm_artist[$artist] = 1;
-  foreach($lastfm['similarartists']['artist'] as $item) {
-    $lastfm_artist[$item['name']] = $item['match'];
-  }
-
-  $lastfm_artist_keys = array_keys($lastfm_artist);
-}
-
 $videoIds = array();
 $max = 0;
 foreach ($result['data']['items'] as $idx => $video) {
-  $videoIds[] = $video['id'];
-  $videoProbability[$idx] = $videoObj['data']['category']==$video['category']?20:1;
-  if ($videoObj['data']['category'] == 'Music' && $video['category'] == 'Music') {
-    $aux = explode('-', $video['title']);
-    $artist = trim($aux[0]);
-    if (in_array($artist, $lastfm_artist_keys)) {
-      $videoProbability[$idx] = $videoProbability[$idx] + 100*$lastfm_artist[$artist];
-    }    
-  }  
+    $videoIds[] = $video['id'];
+    $videoProbability[$idx] = $videoObj['data']['category']==$video['category']?20:1;
 }
 
 $prob = rand(0, max($videoProbability));
@@ -160,7 +131,6 @@ die();
           echo '<h5>' . $video['title'] . '</h5>';
           echo '</a>';
           echo '<small>' . $video['category'] . '</small>';
-          echo '<small style="color:#DEDEDE"> - ' . $videoProbability[$idx] . '</small>';
           echo '</div>';
         }
         ?>
@@ -180,7 +150,50 @@ die();
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
     <script src="js/bootstrap.js"></script>
     <script>
- 
+
+      $(document).ready(function(){
+        $('#next').css('background','transparent url(' + $('.next_video img').attr('src') + ') 0 0 no-repeat');
+        $('#next h5').html($('.next_video h5').html());
+      });
+
+      // 2. This code loads the IFrame Player API code asynchronously.
+      var tag = document.createElement('script');
+      tag.src = "//www.youtube.com/iframe_api";
+      var firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+      // 3. This function creates an <iframe> (and YouTube player)
+      //    after the API code downloads.
+      var player;
+      function onYouTubeIframeAPIReady() {
+        player = new YT.Player('player', {
+          height: '390',
+          width: '640',
+          videoId: '<?php echo $videoId?>',
+          events: {
+            'onReady': onPlayerReady,
+            'onStateChange': onPlayerStateChange
+          }
+        });
+      }
+
+      // 4. The API will call this function when the video player is ready.
+      function onPlayerReady(event) {
+        event.target.playVideo();
+      }
+
+      function onPlayerStateChange(event) {
+        if (event.data == YT.PlayerState.ENDED) {
+          window.location = $('#next').attr('href');
+        }
+      }
+
+      $('.related_video img').click(function(){
+        $('.related_video').removeClass('next_video');
+        $(this).parent().addClass('next_video');
+        $('#next').attr('href', $(this).parent().find('a').attr('href')).css('background','transparent url(' + $('.next_video img').attr('src') + ') 0 0 no-repeat');
+        $('#next h5').html($('.next_video h5').html());
+      });
 
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-3155832-7']);
