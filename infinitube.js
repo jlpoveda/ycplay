@@ -73,18 +73,22 @@ function saveFav(){
 }
 function _initFavlist(){
     var items=getFavlist();
-    if(items.length>0){
-        $.each(items, function(){
-            addToFav(this.id, this.title);
-        });
+    if(typeof items.length != 'undefined'){
+        if(items.length>0){
+            $.each(items, function(){
+                addToFav(this.id, this.title);
+            });
+        }
     }
 }
 function _initPlaylist(){
     var items=getPlaylist();
-    if(items.length>0){
-        $.each(items, function(){
-            addToPlaylist(this.id, this.title);
-        });
+    if(typeof items.length != 'undefined'){
+        if(items.length>0){
+            $.each(items, function(){
+                addToPlaylist(this.id, this.title);
+            });
+        }
     }
 }
 function addToFav(videoId, title){
