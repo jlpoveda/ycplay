@@ -160,3 +160,9 @@ small {
 #ytvideo object {
   margin-left: 8px;
 }
+.red-icon {
+  background-image: url("../img/glyphicons-halflings-red.png") !important;
+}
+.ui-effects-transfer {
+  background: #EEE;
+}
