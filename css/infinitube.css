@@ -136,7 +136,7 @@ small {
   font-size: 10px !important;
 }
  .tab-pane-tool {
-  height: 249px;
+  height: 284px;
   overflow: auto;
 }
 #videoData {
@@ -156,7 +156,8 @@ small {
 }
 #btn-toolbar {
   display: none;
-  margin-left: 30px;
+  margin: 0 0 0 70px !important;
+
 }
 #ytvideo object {
   margin-left: 8px;

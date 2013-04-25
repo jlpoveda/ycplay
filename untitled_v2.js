@@ -11,6 +11,35 @@ var xhrWorking = false;
 var ytplayer = '';
 var playerLoaded = false;
 
+
+var List = function(){
+    this.elements = [];
+    this.numElements = this.elements.length;
+    add = function(){
+    };
+    delete = function(){
+    };
+};
+
+var Video = function(){
+    id = '';
+    title = '';
+}
+
+var Related = function(){
+
+}
+
+var GA = function(category, action, value){
+    event=function(category, action, value){
+        ga('send', 'event', 'Playlist', 'delete', 'playlist-trash', 1);
+    };
+    page=function(url, title){
+        ga('send', 'pageview', url, title);
+    }
+}
+
+
 function _run(){
     $(document).on('click', '.playlist-trash', function(event){
         if(countPlaylistItems() > 1){
@@ -184,17 +213,17 @@ function goVideo(videoId, title){
 }
 
 function goPrevVideo(){
-	// if(currentPlaylistPos==0){
-	// 	return;
-	// }
-	// goVid(currentPlaylistPos-1,currentPlaylistPage);
+    // if(currentPlaylistPos==0){
+    //  return;
+    // }
+    // goVid(currentPlaylistPos-1,currentPlaylistPage);
 }
 // function goVid(playlistPos,playlistPage){
-// 	// if(playlistPage!=currentPlaylistPage){
-// 	// 	currentPlaylistPage=playlistPage;
-// 	// 	return;
-// 	// }
-// 	loadAndPlayVideo(playlistArr[playlistPage][playlistPos].id);
+//  // if(playlistPage!=currentPlaylistPage){
+//  //  currentPlaylistPage=playlistPage;
+//  //  return;
+//  // }
+//  loadAndPlayVideo(playlistArr[playlistPage][playlistPos].id);
 // }
 function doSearch(){
     if(xhrWorking){

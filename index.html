@@ -27,14 +27,27 @@
 <body id="body">
   <div class="container" id="container">
     <head>
-      <div class="span12" id="header">
-        <div class="controls">
+      <div id="header" class="row">
+        <div class="span1">
+          <a href="/" id="homeLink">Infinitube</a>
+        </div>
+        <div class="span8" class="controls">
           <form id="formsearch">
             <div class="input-prepend">
                 <span class="add-on"><i id="searchButton" class="icon-search"></i></span><input class="span4" autocomplete="on" id="searchBox" type="text" placeholder="Search" />
             </div>
           </form>
         </div>
+        <div class="span3">
+          <div class="btn-toolbar" id="btn-toolbar">
+            <div class="btn-group">
+              <a class="btn" href="javascript:History.back()"><i class="icon-step-backward"></i></a>
+              <a class="btn" href="javascript:addToFav('','')"><i class="icon-heart red-icon"></i></a>
+              <a class="btn" href="javascript:playPause()"><i class="icon-play toolPlayPause"></i></a>
+              <a class="btn" href="javascript:goNextVideo()"><i class="icon-step-forward"></i></a>
+            </div>
+          </div>
+        </div>        
       </div>
     </head>
     <div class="row" id="index">
@@ -85,15 +98,6 @@
           </li>
         </ul>
  -->        
-        <div class="btn-toolbar" id="btn-toolbar">
-          <div class="btn-group">
-            <a class="btn" href="javascript:History.back()"><i class="icon-step-backward"></i></a>
-            <a class="btn" href="javascript:addToFav('','')"><i class="icon-heart red-icon"></i></a>
-            <a class="btn" href="javascript:playPause()"><i class="icon-play toolPlayPause"></i></a>
-            <a class="btn" href="javascript:goNextVideo()"><i class="icon-step-forward"></i></a>
-          </div>
-        </div>        
-
       </div>
     </div>
     <div class="row" id="results">
