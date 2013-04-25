@@ -26,23 +26,35 @@
 </head>
 <body id="body">
   <div class="container" id="container">
-    <div class="span12" id="header">
-      <div class="controls">
-        <form id="formsearch">
-          <div class="input-prepend">
-              <span class="add-on"><i id="searchButton" class="icon-search"></i></span><input class="span4" autocomplete="on" id="searchBox" type="text" placeholder="Search" />
-          </div>
-        </form>
+    <head>
+      <div class="span12" id="header">
+        <div class="controls">
+          <form id="formsearch">
+            <div class="input-prepend">
+                <span class="add-on"><i id="searchButton" class="icon-search"></i></span><input class="span4" autocomplete="on" id="searchBox" type="text" placeholder="Search" />
+            </div>
+          </form>
+        </div>
+      </div>
+    </head>
+    <div class="row" id="index">
+      <div class="span4">
+        <h2 align="right">Search,</h2>
+        <p align="right">Chaw-chee, chaw-chee chaw-chee! Coo coo ca cha! Ah coodle doodle do Caw ca caw, caw ca caw. Fun and failure both start out the same way. Hey, maybe you could pop a tent outside with your cousin Maeby… it'd be a good chance to rub off on her. Do you guys know where I could get one of those gold necklaces with the T on it? That's a cross. Across from where?</p>
+      </div>
+      <div class="span4">
+        <h2 align="center">select,</h2>
+        <p align="justify">Hey, maybe you could pop a tent outside with your cousin Maeby… it'd be a good chance to rub off on her. Do you guys know where I could get one of those gold necklaces with the T on it? That's a cross. Across from where? Hey, if I can't find a horny immigrant by then, I don't deserve to stay. When a.. man.. needs to prove to a woman that he's actually.. [pause].. </p>
+      </div>
+      <div class="span4">
+        <h2>and Enjoy</h2>
+        <p>When a.. man.. needs to prove to a woman that he's actually.. [pause].. When a man loves a woman.. I think that's one of Mom's little fibs, you know, like I'll sacrifice anything for my children. Mister gay is bleeding! Mister gay! I think that's one of Mom's little fibs, you know, like I'll sacrifice anything for my children. Mister gay is bleeding! Mister gay!</p>
       </div>
     </div>
-    <div class="row">
+    <div class="row" id="viewer">
       <div class="span9" id="ytvideo">
         <h3> </h3>
-                <div id="innerVideoDiv">
-                    Loading...
-                </div>
-
-
+        <div id="innerVideo"></div>
       </div>
       <div class="span3" id="playlist">
         <h3 id="videoData"></h3>
@@ -73,7 +85,7 @@
           </li>
         </ul>
  -->        
-        <div class="btn-toolbar">
+        <div class="btn-toolbar" id="btn-toolbar">
           <div class="btn-group">
             <a class="btn" href="javascript:History.back()"><i class="icon-step-backward"></i></a>
             <a class="btn" href="javascript:addToFav('','')"><i class="icon-heart red-icon"></i></a>

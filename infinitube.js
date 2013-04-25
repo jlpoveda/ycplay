@@ -12,7 +12,8 @@ var ytplayer = '';
 
 // http://www.simonbingham.me.uk/index.cfm/main/post/uuid/using-html5-local-storage-and-jquery-to-persist-form-data-47
 function _run(){
-    loadPlayer();
+    ytplayer=document.getElementById("ytPlayer");
+    
     $(document).on('click', '.playlist-trash', function(event){
         if(countPlaylistItems() > 1){
             $(this).parent().parent().fadeOut('fast',function(){$(this).remove();savePlaylist();});
@@ -24,9 +25,43 @@ function _run(){
         _gaq.push(['_trackEvent', 'Video', 'Play', 'Playlist']);
         goVideo(id, title);
     });
+    $('#searchButton').click(function(){
+        _gaq.push(['_trackEvent', 'Search', 'Button', $('#searchBox').val()]);
+        doSearch();
+    });
+    $('#searchBox').keypress(function(e){
+        if (e.which == 13){
+            _gaq.push(['_trackEvent', 'Search', 'Enter', $('#searchBox').val()]);
+            doSearch();
+        }
+    });
     $('#formsearch').submit(function(){
         return false;
     })
+
+    // $('#buttonControl').click(playPause);
+
+    if(location.search){
+        var search = location.search;
+        if(search.substring(0,3)=='?v='){
+            _gaq.push(['_trackEvent', 'Video', 'Play', 'Init']);
+            loadAndPlayVideo(search.substring(3));
+        }
+    }
+    // var searchBox=$('#searchBox');
+    // else if(window.location.hash){
+    //     var h = getHash();
+    //     if(h.substring(0,1)=='s'){
+    //         $('#searchBox').val(h.substring(2)).focus();
+    //         _gaq.push(['_trackEvent', 'Search', 'Init', $('#searchBox').val()]);
+    //         doSearch();
+    //     }
+    // }else{
+    //     var defaultSearches=['Parov Stelar', 'Paul Kalkbrenner', 'Peer Kusiv'];
+    //     var randomNumber=Math.floor(Math.random()*defaultSearches.length);
+    //     $('#searchBox').val(defaultSearches[randomNumber]).select().focus();
+    // }
+
     $( "#playlisttable" ).sortable();
     $( "#playlisttable" ).disableSelection();
 
@@ -36,11 +71,15 @@ function _run(){
 function countPlaylistItems(){
     return $('#playlisttable tr').length;
 }
-function loadPlayer(){
-    currentVideoId='wcv3v6XfEvM';
+function loadPlayer(currentVideoId){
+//    currentVideoId='wcv3v6XfEvM';
+//    currentVideoId='';
+    $('#btn-toolbar').show();
     var params={allowScriptAccess:"always"};
     var atts={id:"ytPlayer",allowFullScreen:"true"};
-    swfobject.embedSWF("http://www.youtube.com/v/"+currentVideoId+"&enablejsapi=1&playerapiid=ytplayer"+"&rel=0&autoplay=0&egm=0&loop=0&fs=1&hd=0&showsearch=0&showinfo=0&iv_load_policy=3&cc_load_policy=1","innerVideoDiv","700","420","8",null,null,params,atts);
+    swfobject.embedSWF("http://www.youtube.com/v/"+currentVideoId+"&enablejsapi=1&playerapiid=ytplayer"+"&rel=0&autoplay=0&egm=0&loop=0&fs=1&hd=0&showsearch=0&showinfo=0&iv_load_policy=3&cc_load_policy=1","innerVideo","700","420","8",null,null,params,atts);
+    ytplayer=document.getElementById("ytPlayer");
+    ytplayer.addEventListener("onStateChange","onPlayerStateChange");
 }
 function playlistToJson(){
     return listToJson('playlisttable');
@@ -113,51 +152,6 @@ function addToPlaylist(videoId, title){
     savePlaylist();
 }
 function onYouTubePlayerReady(playerId){
-    onBodyLoad();
-	ytplayer=document.getElementById("ytPlayer");
-	ytplayer.addEventListener("onStateChange","onPlayerStateChange");
-	var searchBox=$('#searchBox');
-//	searchBox.keyup(doInstantSearch);
-	// $(document.documentElement).keydown(onKeyDown);
-	$('#buttonControl').click(playPause);
-	$('#linkUrl').click(function(e){
-		$(this).select();
-	});
-	$('#embedUrl').click(function(e){
-		$(this).select();
-	});
-    if(location.search){
-        var search = location.search;
-        if(search.substring(0,3)=='?v='){
-            _gaq.push(['_trackEvent', 'Video', 'Play', 'Init']);
-            loadAndPlayVideo(search.substring(3));
-        }
-    }else if(window.location.hash){
-        var h = getHash();
-        if(h.substring(0,1)=='v'){
-            _gaq.push(['_trackEvent', 'Video', 'Play', 'Init']);
-            loadAndPlayVideo(h.substring(2));
-        }else if(h.substring(0,1)=='s'){
-            $('#searchBox').val(h.substring(2)).focus();
-            _gaq.push(['_trackEvent', 'Search', 'Init', $('#searchBox').val()]);
-            doSearch();
-        }
-    }else{
-		var defaultSearches=['Parov Stelar', 'Paul Kalkbrenner', 'Peer Kusiv'];
-		var randomNumber=Math.floor(Math.random()*defaultSearches.length);
-		$('#searchBox').val(defaultSearches[randomNumber]).select().focus();
-	}
-    $('#searchButton').click(function(){
-        _gaq.push(['_trackEvent', 'Search', 'Button', $('#searchBox').val()]);
-        doSearch();
-    });
-    $('#searchBox').keypress(function(e){
-        if (e.which == 13){
-            _gaq.push(['_trackEvent', 'Search', 'Enter', $('#searchBox').val()]);
-            doSearch();
-        }
-    });  
-//    doInstantSearch();
 }
 function onBodyLoad(){
 	currentSearch='';
@@ -578,10 +572,12 @@ function stripVowelAccent(str) {
 }
 
 window.onstatechange = function() {
-    loadAndPlayVideo(History.getState().data['id']);
+    currentVideoId=History.getState().data['id'];
+    loadPlayer();
+    loadAndPlayVideo(currentVideoId);
     // Incrementamos el número de páginas vista
     ga('send', 'pageview');
-    _gaq.push(['_trackEvent', 'Video', 'View', History.getState().data['id']]);
+    _gaq.push(['_trackEvent', 'Video', 'View', currentVideoId]);
 }
 
 google.setOnLoadCallback(_run);
