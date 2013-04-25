@@ -265,16 +265,18 @@ function getRelatedVideos(videoId, page){
         cache : true,
         jsonpCallback : 'cachedapp',
         success:function(responseData,textStatus,XMLHttpRequest){
-            if(responseData.data.items){
-                videoItems=responseData.data.items;
-                // playlistArr=[];
-                // playlistArr.push(videos);
-                updateVideoDisplay(videoItems);
-                fillVideoInfo(currentVideoId);
-                pendingDoneWorking=true;
-            }else{
-//                updateSuggestedKeyword('No results for "'+keyword+'"');
-                doneWorking();
+            if(typeof responseData.data != 'undefined'){
+                if(responseData.data.items){
+                    videoItems=responseData.data.items;
+                    // playlistArr=[];
+                    // playlistArr.push(videos);
+                    updateVideoDisplay(videoItems);
+                    fillVideoInfo(currentVideoId);
+                    pendingDoneWorking=true;
+                }else{
+    //                updateSuggestedKeyword('No results for "'+keyword+'"');
+                    doneWorking();
+                }
             }
         }
     });
@@ -305,7 +307,7 @@ function selectNextMusicVideo(lastfmData, artist){
     var maxProb = 0;
     var rndProb = 0;
     var match=0;
-    if(lastfmData.similarartists.artist!=null){
+    if(typeof lastfmData.similarartists != 'undefined'){
         numLastfmItems=lastfmData.similarartists.artist.length;
     }
     for(i=0;i<numLastfmItems;i++){
