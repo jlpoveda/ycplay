@@ -65,6 +65,17 @@ function _run(){
     $( "#playlisttable" ).sortable();
     $( "#playlisttable" ).disableSelection();
 
+    $('#searchButton').click(function(){
+        ga('send', 'event', 'Search', 'search', 'button', 1);
+        doSearch();
+    });
+    $('#searchBox').keypress(function(e){
+        if (e.which == 13){
+            ga('send', 'event', 'Search', 'search', 'enter', 1);
+            doSearch();
+        }
+    });  
+
     _initPlaylist();
     _initFavlist();
 }
@@ -153,6 +164,43 @@ function addToPlaylist(videoId, title){
     savePlaylist();
 }
 function onYouTubePlayerReady(playerId){
+<<<<<<< HEAD
+=======
+    onBodyLoad();
+	ytplayer=document.getElementById("ytPlayer");
+	ytplayer.addEventListener("onStateChange","onPlayerStateChange");
+	var searchBox=$('#searchBox');
+//	searchBox.keyup(doInstantSearch);
+	// $(document.documentElement).keydown(onKeyDown);
+	$('#buttonControl').click(playPause);
+	$('#linkUrl').click(function(e){
+		$(this).select();
+	});
+	$('#embedUrl').click(function(e){
+		$(this).select();
+	});
+    if(location.search){
+        var search = location.search;
+        if(search.substring(0,3)=='?v='){
+            ga('send', 'event', 'Video', 'play', 'init', 1);
+            loadAndPlayVideo(search.substring(3));
+        }
+    }else if(window.location.hash){
+        var h = getHash();
+        if(h.substring(0,1)=='v'){
+            ga('send', 'event', 'Video', 'play', 'init', 1);
+            loadAndPlayVideo(h.substring(2));
+        }else if(h.substring(0,1)=='s'){
+            $('#searchBox').val(h.substring(2)).focus();
+            ga('send', 'event', 'Search', 'search', 'init', 1);
+            doSearch();
+        }
+    }else{
+		var defaultSearches=['Parov Stelar', 'Paul Kalkbrenner', 'Peer Kusiv'];
+		var randomNumber=Math.floor(Math.random()*defaultSearches.length);
+		$('#searchBox').val(defaultSearches[randomNumber]).select().focus();
+	}
+>>>>>>> f73015dd90d8851115d75859d9a06f239fa5b2ac
 }
 function onBodyLoad(){
 	currentSearch='';
@@ -583,25 +631,18 @@ window.onstatechange = function() {
     loadPlayer();
     loadAndPlayVideo(currentVideoId);
     // Incrementamos el número de páginas vista
+<<<<<<< HEAD
+    ga('send', 'pageview');
+    _gaq.push(['_trackEvent', 'Video', 'View', currentVideoId]);
+=======
     ga('send', 'pageview', '?v='+History.getState().data['id'], History.getState().data['title']);
     //ga('send', 'event', 'VideoView', History.getState().data['id']);
+>>>>>>> f73015dd90d8851115d75859d9a06f239fa5b2ac
 }
 
 google.setOnLoadCallback(_run);
 
 /*
-
-Anotaciones para el History.js
-
-window.onstatechange = function() {
-    console.log('cambio de direccion ' + History.getState().data['id']);
-}
-
-History.pushState({'id':'yyy','Title':'Titulo de prueba'},'Ejemplo de titulo adsfasd','?234234234dsf');
-
-History.back();
-
-==============
 
 Eventos del storage
 http://html5demos.com/storage-events
