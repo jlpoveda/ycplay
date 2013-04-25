@@ -16,12 +16,12 @@ function _run(){
     $(document).on('click', '.playlist-trash', function(event){
         if(countPlaylistItems() > 1){
             $(this).parent().parent().fadeOut('fast',function(){$(this).remove();savePlaylist();});
-            ga('send', 'event', 'PlaylistDelete', 'clicked');
+            ga('send', 'event', 'Playlist', 'delete', 'playlist-trash', 1);
         }
     }).on('click', '.playlist-play', function(event){
         var id=$(this).parent().parent().attr('id').substring(1);
         var title=$(this).parent().parent().find('small').html();
-        ga('send', 'event', 'PlaylistPlay', 'clicked');
+        ga('send', 'event', 'Video', 'play', 'playlist-play', 1);
         goVideo(id, title);
     });
     $('#formsearch').submit(function(){
@@ -29,6 +29,17 @@ function _run(){
     })
     $( "#playlisttable" ).sortable();
     $( "#playlisttable" ).disableSelection();
+
+    $('#searchButton').click(function(){
+        ga('send', 'event', 'Search', 'search', 'button', 1);
+        doSearch();
+    });
+    $('#searchBox').keypress(function(e){
+        if (e.which == 13){
+            ga('send', 'event', 'Search', 'search', 'enter', 1);
+            doSearch();
+        }
+    });  
 
     _initPlaylist();
     _initFavlist();
@@ -98,7 +109,8 @@ function addToFav(videoId, title){
     if(title==''){
         title=currentVideo.title;
     }
-    ga('send', 'event', 'FavoritesAdd', videoId);
+    ga('send', 'event', 'Favlist', 'add', 'button', 1);
+
     favObjects.push({'id':videoId,'title':title});
     var str='<tr id="f'+videoId+'"><td><img src="http://i.ytimg.com/vi/'+videoId+'/default.jpg" class="minithumb" /></td><td><small>'+title+'</small></td><td><i class="playlist-trash icon-trash"></i><i class="icon-play playlist-play"></i></td></tr>';
 //    $('#f'+currentVideoId).remove();
@@ -129,17 +141,17 @@ function onYouTubePlayerReady(playerId){
     if(location.search){
         var search = location.search;
         if(search.substring(0,3)=='?v='){
-            ga('send', 'event', 'VideoPlay', 'Init');
+            ga('send', 'event', 'Video', 'play', 'init', 1);
             loadAndPlayVideo(search.substring(3));
         }
     }else if(window.location.hash){
         var h = getHash();
         if(h.substring(0,1)=='v'){
-            ga('send', 'event', 'VideoPlay', 'Init');
+            ga('send', 'event', 'Video', 'play', 'init', 1);
             loadAndPlayVideo(h.substring(2));
         }else if(h.substring(0,1)=='s'){
             $('#searchBox').val(h.substring(2)).focus();
-            ga('send', 'event', 'SearchInit', $('#searchBox').val());
+            ga('send', 'event', 'Search', 'search', 'init', 1);
             doSearch();
         }
     }else{
@@ -147,17 +159,6 @@ function onYouTubePlayerReady(playerId){
 		var randomNumber=Math.floor(Math.random()*defaultSearches.length);
 		$('#searchBox').val(defaultSearches[randomNumber]).select().focus();
 	}
-    $('#searchButton').click(function(){
-        ga('send', 'event', 'SearchButton', $('#searchBox').val());
-        doSearch();
-    });
-    $('#searchBox').keypress(function(e){
-        if (e.which == 13){
-            ga('send', 'event', 'SearchEnter', $('#searchBox').val());
-            doSearch();
-        }
-    });  
-//    doInstantSearch();
 }
 function onBodyLoad(){
 	currentSearch='';
@@ -183,13 +184,13 @@ function onPlayerStateChange(newState){
 	}else if(playerState==0){
         $('.toolPlayPause').removeClass('icon-pause').addClass('icon-play');
 		goNextVideo();
-        ga('send', 'event', 'VideoNext', 'Auto');
+        ga('send', 'event', 'Video', 'play', 'auto', 1);
     }
 }
 function goNextVideo(){
     var id=$('#playlisttable tr').first().attr('id').substring(1);
     var title=$('#playlisttable tr').first().find('small').html();
-    ga('send', 'event', 'VideoNext', 'NextButton');
+    ga('send', 'event', 'Video', 'play', 'next-button', 1);
 
     History.pushState({'id':id,'Title':title},title,'?v='+id);
 }
@@ -429,7 +430,8 @@ function updateHTML(elmId,value){
     document.getElementById(elmId).innerHTML=value;
 }
 function setNextVideo(videoId){
-    ga('send', 'event', 'PlaylistAdd', 'RelatedButton');
+    ga('send', 'event', 'Playlist', 'add', 'related-img', 1);
+
     addToPlaylist(videoId,$('#a'+videoId+' .videoinfotitle a').html());
     var options = { to: "#playlistlink", className: "ui-effects-transfer" };
     $( "#a"+videoId ).effect('transfer', options, 500);
@@ -580,8 +582,8 @@ function stripVowelAccent(str) {
 window.onstatechange = function() {
     loadAndPlayVideo(History.getState().data['id']);
     // Incrementamos el número de páginas vista
-    ga('send', 'pageview');
-    ga('send', 'event', 'VideoView', History.getState().data['id']);
+    ga('send', 'pageview', '?v='+History.getState().data['id'], History.getState().data['title']);
+    //ga('send', 'event', 'VideoView', History.getState().data['id']);
 }
 
 google.setOnLoadCallback(_run);
