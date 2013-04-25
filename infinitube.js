@@ -16,12 +16,12 @@ function _run(){
     $(document).on('click', '.playlist-trash', function(event){
         if(countPlaylistItems() > 1){
             $(this).parent().parent().fadeOut('fast',function(){$(this).remove();savePlaylist();});
-            _gaq.push(['_trackEvent', 'Playlist', 'delete', 1]);
+            ga('send', 'event', 'PlaylistDelete', 'clicked');
         }
     }).on('click', '.playlist-play', function(event){
         var id=$(this).parent().parent().attr('id').substring(1);
         var title=$(this).parent().parent().find('small').html();
-        _gaq.push(['_trackEvent', 'Video', 'Play', 'Playlist']);
+        ga('send', 'event', 'PlaylistPlay', 'clicked');
         goVideo(id, title);
     });
     $('#formsearch').submit(function(){
@@ -98,7 +98,7 @@ function addToFav(videoId, title){
     if(title==''){
         title=currentVideo.title;
     }
-    _gaq.push(['_trackEvent', 'Favorites', 'Add', videoId]);
+    ga('send', 'event', 'FavoritesAdd', videoId);
     favObjects.push({'id':videoId,'title':title});
     var str='<tr id="f'+videoId+'"><td><img src="http://i.ytimg.com/vi/'+videoId+'/default.jpg" class="minithumb" /></td><td><small>'+title+'</small></td><td><i class="playlist-trash icon-trash"></i><i class="icon-play playlist-play"></i></td></tr>';
 //    $('#f'+currentVideoId).remove();
@@ -129,17 +129,17 @@ function onYouTubePlayerReady(playerId){
     if(location.search){
         var search = location.search;
         if(search.substring(0,3)=='?v='){
-            _gaq.push(['_trackEvent', 'Video', 'Play', 'Init']);
+            ga('send', 'event', 'VideoPlay', 'Init');
             loadAndPlayVideo(search.substring(3));
         }
     }else if(window.location.hash){
         var h = getHash();
         if(h.substring(0,1)=='v'){
-            _gaq.push(['_trackEvent', 'Video', 'Play', 'Init']);
+            ga('send', 'event', 'VideoPlay', 'Init');
             loadAndPlayVideo(h.substring(2));
         }else if(h.substring(0,1)=='s'){
             $('#searchBox').val(h.substring(2)).focus();
-            _gaq.push(['_trackEvent', 'Search', 'Init', $('#searchBox').val()]);
+            ga('send', 'event', 'SearchInit', $('#searchBox').val());
             doSearch();
         }
     }else{
@@ -148,12 +148,12 @@ function onYouTubePlayerReady(playerId){
 		$('#searchBox').val(defaultSearches[randomNumber]).select().focus();
 	}
     $('#searchButton').click(function(){
-        _gaq.push(['_trackEvent', 'Search', 'Button', $('#searchBox').val()]);
+        ga('send', 'event', 'SearchButton', $('#searchBox').val());
         doSearch();
     });
     $('#searchBox').keypress(function(e){
         if (e.which == 13){
-            _gaq.push(['_trackEvent', 'Search', 'Enter', $('#searchBox').val()]);
+            ga('send', 'event', 'SearchEnter', $('#searchBox').val());
             doSearch();
         }
     });  
@@ -183,13 +183,13 @@ function onPlayerStateChange(newState){
 	}else if(playerState==0){
         $('.toolPlayPause').removeClass('icon-pause').addClass('icon-play');
 		goNextVideo();
-        _gaq.push(['_trackEvent', 'Video', 'Next', 'Auto']);
+        ga('send', 'event', 'VideoNext', 'Auto');
     }
 }
 function goNextVideo(){
     var id=$('#playlisttable tr').first().attr('id').substring(1);
     var title=$('#playlisttable tr').first().find('small').html();
-    _gaq.push(['_trackEvent', 'Video', 'Next', 'NextButton']);
+    ga('send', 'event', 'VideoNext', 'NextButton');
 
     History.pushState({'id':id,'Title':title},title,'?v='+id);
 }
@@ -429,7 +429,7 @@ function updateHTML(elmId,value){
     document.getElementById(elmId).innerHTML=value;
 }
 function setNextVideo(videoId){
-    _gaq.push(['_trackEvent', 'Videos', 'addToPlaylist', 'RelatedButton']);
+    ga('send', 'event', 'PlaylistAdd', 'RelatedButton');
     addToPlaylist(videoId,$('#a'+videoId+' .videoinfotitle').html());
     var options = { to: "#playlistlink", className: "ui-effects-transfer" };
     $( "#a"+videoId ).effect('transfer', options, 500);
@@ -581,7 +581,7 @@ window.onstatechange = function() {
     loadAndPlayVideo(History.getState().data['id']);
     // Incrementamos el número de páginas vista
     ga('send', 'pageview');
-    _gaq.push(['_trackEvent', 'Video', 'View', History.getState().data['id']]);
+    ga('send', 'event', 'VideoView', History.getState().data['id']);
 }
 
 google.setOnLoadCallback(_run);
