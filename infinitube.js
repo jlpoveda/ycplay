@@ -296,7 +296,7 @@ function getRelatedArtists(artist){
 function selectNextMusicVideo(lastfmData, artist){
     var numItems=videoItems.length;
     var lastfmArtists={};
-    var numLastfmItems=lastfmData.similarartists.artist.length;
+    var numLastfmItems=0;
     var prob=0;
     var tmp=0;
     var str='';
@@ -305,6 +305,9 @@ function selectNextMusicVideo(lastfmData, artist){
     var maxProb = 0;
     var rndProb = 0;
     var match=0;
+    if(lastfmData.similarartists.artist!=null){
+        numLastfmItems=lastfmData.similarartists.artist.length;
+    }
     for(i=0;i<numLastfmItems;i++){
         if(typeof lastfmData.similarartists.artist[i].name != 'undefined') {
             str = lastfmData.similarartists.artist[i].name;
