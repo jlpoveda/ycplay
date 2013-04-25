@@ -430,7 +430,7 @@ function updateHTML(elmId,value){
 }
 function setNextVideo(videoId){
     ga('send', 'event', 'PlaylistAdd', 'RelatedButton');
-    addToPlaylist(videoId,$('#a'+videoId+' .videoinfotitle').html());
+    addToPlaylist(videoId,$('#a'+videoId+' .videoinfotitle a').html());
     var options = { to: "#playlistlink", className: "ui-effects-transfer" };
     $( "#a"+videoId ).effect('transfer', options, 500);
 }
@@ -588,18 +588,6 @@ google.setOnLoadCallback(_run);
 
 /*
 
-Anotaciones para el History.js
-
-window.onstatechange = function() {
-    console.log('cambio de direccion ' + History.getState().data['id']);
-}
-
-History.pushState({'id':'yyy','Title':'Titulo de prueba'},'Ejemplo de titulo adsfasd','?234234234dsf');
-
-History.back();
-
-==============
-
 Eventos del storage
 http://html5demos.com/storage-events
 
@@ -608,5 +596,10 @@ http://html5demos.com/storage-events
 Modificación del favicon
 $("#favicon").attr("href","favicon.png");
 $("#favicon").attr("href","favicon.ico");
+
+==============
+
+Google Analytics 
+https://developers.google.com/analytics/devguides/collection/analyticsjs/advanced
 
 */
