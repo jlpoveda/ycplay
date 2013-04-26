@@ -201,7 +201,7 @@ function doSearch(){
         pendingSearch=true;
         return;
     }
-    updateHash('s='+$('#searchBox').val());
+    //updateHash('s='+$('#searchBox').val());
     getTopSearchResult($('#searchBox').val());
 }
 function getTopSearchResult(keyword, page){
@@ -429,24 +429,6 @@ function setNextVideo(videoId){
 function updateSuggestedKeyword(keyword){
     updateHTML('searchTermKeyword',keyword);
 }
-function updateHash(hash){
-    var timeDelay=1000;
-    if(hashTimeout){
-        clearTimeout(hashTimeout);
-    }
-    hashTimeout=setTimeout(function(){
-        window.location.replace("#"+encodeURI(hash))
-        // $('#fb_share').attr('share_url',window.location);
-        // $.ajax({
-        //     type:"GET",
-        //     url:"http://static.ak.fbcdn.net/connect.php/js/FB.Share",
-        //     dataType:"script"
-        // });
-        // $('#linkUrl').val(window.location);
-        document.title='"'+currentSuggestion.toTitleCase()+'" on Infinitube!';
-        // prepareFBShare();
-    },timeDelay);
-}
 function getHash(){
     return decodeURIComponent(window.location.hash.substring(1));
 }
@@ -608,5 +590,9 @@ $("#favicon").attr("href","favicon.ico");
 
 Google Analytics 
 https://developers.google.com/analytics/devguides/collection/analyticsjs/advanced
+
+==============
+
+http://playground.html5rocks.com/#semantic_markup
 
 */
