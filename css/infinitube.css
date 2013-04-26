@@ -136,7 +136,7 @@ small {
   font-size: 10px !important;
 }
  .tab-pane-tool {
-  height: 249px;
+  height: 284px;
   overflow: auto;
 }
 #videoData {
@@ -154,8 +154,10 @@ small {
 .playlist-trash:hover,.playlist-play:hover{
   opacity:.7;
 }
-.btn-toolbar {
-  margin-left: 30px;
+#btn-toolbar {
+  display: none;
+  margin: 0 0 0 70px !important;
+
 }
 #ytvideo object {
   margin-left: 8px;
@@ -165,4 +167,9 @@ small {
 }
 .ui-effects-transfer {
   background: #EEE;
+}
+#innerVideo {
+  width: 700px;
+  height: 400px;
+  background: #FFF url(../img/stencil01.jpg) no-repeat -185px -60px;
 }

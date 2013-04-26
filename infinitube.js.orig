@@ -9,9 +9,11 @@ var playlistObjects = [];
 var favObjects = [];
 var xhrWorking = false;
 var ytplayer = '';
-var playerLoaded = false;
 
+// http://www.simonbingham.me.uk/index.cfm/main/post/uuid/using-html5-local-storage-and-jquery-to-persist-form-data-47
 function _run(){
+    ytplayer=document.getElementById("ytPlayer");
+    
     $(document).on('click', '.playlist-trash', function(event){
         if(countPlaylistItems() > 1){
             $(this).parent().parent().fadeOut('fast',function(){$(this).remove();savePlaylist();});
@@ -24,6 +26,46 @@ function _run(){
         goVideo(id, title);
     });
     $('#searchButton').click(function(){
+        _gaq.push(['_trackEvent', 'Search', 'Button', $('#searchBox').val()]);
+        doSearch();
+    });
+    $('#searchBox').keypress(function(e){
+        if (e.which == 13){
+            _gaq.push(['_trackEvent', 'Search', 'Enter', $('#searchBox').val()]);
+            doSearch();
+        }
+    });
+    $('#formsearch').submit(function(){
+        return false;
+    })
+
+    // $('#buttonControl').click(playPause);
+
+    if(location.search){
+        var search = location.search;
+        if(search.substring(0,3)=='?v='){
+            _gaq.push(['_trackEvent', 'Video', 'Play', 'Init']);
+            loadAndPlayVideo(search.substring(3));
+        }
+    }
+    // var searchBox=$('#searchBox');
+    // else if(window.location.hash){
+    //     var h = getHash();
+    //     if(h.substring(0,1)=='s'){
+    //         $('#searchBox').val(h.substring(2)).focus();
+    //         _gaq.push(['_trackEvent', 'Search', 'Init', $('#searchBox').val()]);
+    //         doSearch();
+    //     }
+    // }else{
+    //     var defaultSearches=['Parov Stelar', 'Paul Kalkbrenner', 'Peer Kusiv'];
+    //     var randomNumber=Math.floor(Math.random()*defaultSearches.length);
+    //     $('#searchBox').val(defaultSearches[randomNumber]).select().focus();
+    // }
+
+    $( "#playlisttable" ).sortable();
+    $( "#playlisttable" ).disableSelection();
+
+    $('#searchButton').click(function(){
         ga('send', 'event', 'Search', 'search', 'button', 1);
         doSearch();
     });
@@ -32,70 +74,23 @@ function _run(){
             ga('send', 'event', 'Search', 'search', 'enter', 1);
             doSearch();
         }
-    });
-    $('#formsearch').submit(function(){
-        return false;
-    });
-    $('#homeLink').click(function(event){
-        event.preventDefault();
-        $('#index').slideDown('fast');
-        History.pushState('','Infinitube','/');
-        ga('send', 'pageview', '/');
-        ga('send', 'event', 'Nav', 'index', 'header', 1);
-    });
-    if(location.search){
-        var search = location.search;
-        if(search.substring(0,3)=='?v='){
-            $('#index').hide();
-            ga('send', 'event', 'Video', 'play', 'init', 1);
-            currentVideoId=search.substring(3);
-            loadPlayer();
-            loadAndPlayVideo(currentVideoId);
-        }
-    }
-    $( "#playlisttable" ).sortable();
-    $( "#playlisttable" ).disableSelection();
+    });  
 
     _initPlaylist();
     _initFavlist();
 }
-function onBodyLoad(){
-    currentSearch='';
-    currentSuggestion='';
-    currentVideoId='';
-    playlistShowing=false;
-    playlistArr=[];
-    currentPlaylistPos=0;
-    currentPlaylistPage=0;
-    xhrWorking=false;
-    pendingSearch=false;
-    pendingDoneWorking=false;
-    playerState=-1;
-    hashTimeout=false;
-    videoList=[];
-}
-function onPlayerStateChange(newState){
-    playerState=newState;
-    if(pendingDoneWorking&&playerState==1){
-        doneWorking();
-        pendingDoneWorking=false;
-        $('.toolPlayPause').removeClass('icon-play').addClass('icon-pause');
-    }else if(playerState==0){
-        $('.toolPlayPause').removeClass('icon-pause').addClass('icon-play');
-        goNextVideo();
-        ga('send', 'event', 'Video', 'play', 'auto', 1);
-    }
-}
 function countPlaylistItems(){
     return $('#playlisttable tr').length;
 }
-function loadPlayer(){
-    if(!playerLoaded){
-        $('#btn-toolbar').show();
-        var params={allowScriptAccess:"always"};
-        var atts={id:"ytPlayer",allowFullScreen:"true"};
-        swfobject.embedSWF("http://www.youtube.com/v/"+currentVideoId+"&enablejsapi=1&playerapiid=ytplayer"+"&rel=0&autoplay=0&egm=0&loop=0&fs=1&hd=0&showsearch=0&showinfo=0&iv_load_policy=3&cc_load_policy=1","innerVideo","700","420","8",null,null,params,atts);
-    }   playerLoaded=true;
+function loadPlayer(currentVideoId){
+//    currentVideoId='wcv3v6XfEvM';
+//    currentVideoId='';
+    $('#btn-toolbar').show();
+    var params={allowScriptAccess:"always"};
+    var atts={id:"ytPlayer",allowFullScreen:"true"};
+    swfobject.embedSWF("http://www.youtube.com/v/"+currentVideoId+"&enablejsapi=1&playerapiid=ytplayer"+"&rel=0&autoplay=0&egm=0&loop=0&fs=1&hd=0&showsearch=0&showinfo=0&iv_load_policy=3&cc_load_policy=1","innerVideo","700","420","8",null,null,params,atts);
+    ytplayer=document.getElementById("ytPlayer");
+    ytplayer.addEventListener("onStateChange","onPlayerStateChange");
 }
 function playlistToJson(){
     return listToJson('playlisttable');
@@ -169,8 +164,70 @@ function addToPlaylist(videoId, title){
     savePlaylist();
 }
 function onYouTubePlayerReady(playerId){
-    ytplayer=document.getElementById("ytPlayer");
-    ytplayer.addEventListener("onStateChange","onPlayerStateChange");
+<<<<<<< HEAD
+=======
+    onBodyLoad();
+	ytplayer=document.getElementById("ytPlayer");
+	ytplayer.addEventListener("onStateChange","onPlayerStateChange");
+	var searchBox=$('#searchBox');
+//	searchBox.keyup(doInstantSearch);
+	// $(document.documentElement).keydown(onKeyDown);
+	$('#buttonControl').click(playPause);
+	$('#linkUrl').click(function(e){
+		$(this).select();
+	});
+	$('#embedUrl').click(function(e){
+		$(this).select();
+	});
+    if(location.search){
+        var search = location.search;
+        if(search.substring(0,3)=='?v='){
+            ga('send', 'event', 'Video', 'play', 'init', 1);
+            loadAndPlayVideo(search.substring(3));
+        }
+    }else if(window.location.hash){
+        var h = getHash();
+        if(h.substring(0,1)=='v'){
+            ga('send', 'event', 'Video', 'play', 'init', 1);
+            loadAndPlayVideo(h.substring(2));
+        }else if(h.substring(0,1)=='s'){
+            $('#searchBox').val(h.substring(2)).focus();
+            ga('send', 'event', 'Search', 'search', 'init', 1);
+            doSearch();
+        }
+    }else{
+		var defaultSearches=['Parov Stelar', 'Paul Kalkbrenner', 'Peer Kusiv'];
+		var randomNumber=Math.floor(Math.random()*defaultSearches.length);
+		$('#searchBox').val(defaultSearches[randomNumber]).select().focus();
+	}
+>>>>>>> f73015dd90d8851115d75859d9a06f239fa5b2ac
+}
+function onBodyLoad(){
+	currentSearch='';
+	currentSuggestion='';
+	currentVideoId='';
+	playlistShowing=false;
+	playlistArr=[];
+	currentPlaylistPos=0;
+    currentPlaylistPage=0;
+    xhrWorking=false;
+    pendingSearch=false;
+    pendingDoneWorking=false;
+    playerState=-1;
+    hashTimeout=false;
+    videoList=[];
+}
+function onPlayerStateChange(newState){
+	playerState=newState;
+	if(pendingDoneWorking&&playerState==1){
+		doneWorking();
+		pendingDoneWorking=false;
+        $('.toolPlayPause').removeClass('icon-play').addClass('icon-pause');
+	}else if(playerState==0){
+        $('.toolPlayPause').removeClass('icon-pause').addClass('icon-play');
+		goNextVideo();
+        ga('send', 'event', 'Video', 'play', 'auto', 1);
+    }
 }
 function goNextVideo(){
     var id=$('#playlisttable tr').first().attr('id').substring(1);
@@ -500,7 +557,6 @@ function loadAndPlayVideo(videoId,bypassXhrWorkingCheck){
     if(!bypassXhrWorkingCheck&&xhrWorking){
         return;
     }
-    $('#index').slideUp('fast');
     if(ytplayer){
         xhrWorking=true;
         ytplayer.loadVideoById(videoId);
@@ -508,6 +564,7 @@ function loadAndPlayVideo(videoId,bypassXhrWorkingCheck){
         pendingDoneWorking=true;
     }
 //    updateHash('v='+videoId);
+    $('#embedUrl').val('<object width="640" height="385"><param name="movie" value="http://www.youtube.com/v/'+currentVideoId+'?fs=1&hl=en_US"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/'+currentVideoId+'?fs=1&hl=en_US" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="640" height="385"></embed></object>');
     getRelatedVideos(videoId);
 }
 function showCredits(){$('#additionalCredits').slideToggle('fast');}
@@ -571,29 +628,21 @@ function stripVowelAccent(str) {
 
 window.onstatechange = function() {
     currentVideoId=History.getState().data['id'];
-    if(currentVideoId){
-        loadPlayer();
-        loadAndPlayVideo(currentVideoId);
-        // Incrementamos el número de páginas vista
-        ga('send', 'pageview', '?v='+History.getState().data['id'], History.getState().data['title']);
-    }
+    loadPlayer();
+    loadAndPlayVideo(currentVideoId);
+    // Incrementamos el número de páginas vista
+<<<<<<< HEAD
+    ga('send', 'pageview');
+    _gaq.push(['_trackEvent', 'Video', 'View', currentVideoId]);
+=======
+    ga('send', 'pageview', '?v='+History.getState().data['id'], History.getState().data['title']);
+    //ga('send', 'event', 'VideoView', History.getState().data['id']);
+>>>>>>> f73015dd90d8851115d75859d9a06f239fa5b2ac
 }
 
 google.setOnLoadCallback(_run);
 
 /*
-
-Anotaciones para el History.js
-
-window.onstatechange = function() {
-    console.log('cambio de direccion ' + History.getState().data['id']);
-}
-
-History.pushState({'id':'yyy','Title':'Titulo de prueba'},'Ejemplo de titulo adsfasd','?234234234dsf');
-
-History.back();
-
-==============
 
 Eventos del storage
 http://html5demos.com/storage-events
