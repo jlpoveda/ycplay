@@ -24,6 +24,13 @@ function _run(){
         var title=$(this).parent().parent().find('small').html();
         ga('send', 'event', 'Video', 'play', 'playlist-play', 1);
         goVideo(id, title);
+    }).on('click', '.videoinfotitle a', function(e){
+        e.preventDefault();
+        var id=$(this).parent().parent().parent().attr('id');
+        var title=$(this).html();
+        ga('send', 'event', 'Video', 'play', 'related-play', 1);
+        History.pushState({'id':id.substring(1),'Title':title},title,'?v='+id.substring(1));
+        return false;
     });
     $('#searchButton').click(function(){
         ga('send', 'event', 'Search', 'search', 'button', 1);
@@ -397,7 +404,7 @@ function updateVideoDisplay(videos){
 
     var relatedVideos = '<ul class="inline unstyled related">';
     for(var i=0;i<numThumbs;i++){
-        var tmp='<li id="a'+videos[i].id+'" class="span2 relatedvideos"><a href="javascript:setNextVideo(\''+videos[i].id+'\')"><img src="' + videos[i].thumbnail.sqDefault + '"></a><ul class="unstyled videoinfo"><li class="pagination-centered videoinfotitle"><a href="javascript:goVideo(\''+videos[i].id+'\',\''+videos[i].title+'\')">' + videos[i].title + '</a></li><li class="hidden">' + videos[i].category + '</li></ul></li>';
+        var tmp='<li id="a'+videos[i].id+'" class="span2 relatedvideos"><a href="javascript:setNextVideo(\''+videos[i].id+'\')"><img src="' + videos[i].thumbnail.sqDefault + '"></a><ul class="unstyled videoinfo"><li class="pagination-centered videoinfotitle"><a href="?v='+videos[i].id+'">' + videos[i].title + '</a></li><li class="hidden">' + videos[i].category + '</li></ul></li>';
         relatedVideos = relatedVideos + tmp;
     }
     relatedVideos = relatedVideos + '</ul>';

@@ -173,3 +173,6 @@ small {
   height: 400px;
   background: #FFF url(../img/stencil01.jpg) no-repeat -185px -60px;
 }
+#homelink img {
+  margin: 1px 0 0 9px;
+}
