@@ -29,8 +29,7 @@ function _run(){
         var id=$(this).parent().parent().parent().attr('id');
         var title=$(this).html();
         ga('send', 'event', 'Video', 'play', 'related-play', 1);
-        History.pushState({'id':id.substring(1),'Title':title},title,'?v='+id.substring(1));
-        return false;
+        goVideo(id.substring(1), title);
     });
     $('#searchButton').click(function(){
         ga('send', 'event', 'Search', 'search', 'button', 1);
