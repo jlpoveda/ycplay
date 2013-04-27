@@ -5732,6 +5732,7 @@ a.badge:hover {
   position: relative;
   width: 100%;
   overflow: hidden;
+  margin-left: 59px;
 }
 
 .carousel .item {
