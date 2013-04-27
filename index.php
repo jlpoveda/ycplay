@@ -24,7 +24,7 @@
     <![endif]-->
 
     <!-- Fav and touch icons -->
-    <link rel="shortcut icon" href="../assets/ico/favicon.ico">
+    <link rel="shortcut icon" href="ico/favicon.ico">
     <link rel="apple-touch-icon-precomposed" sizes="144x144" href="../assets/ico/apple-touch-icon-144-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
@@ -33,7 +33,7 @@
     <div class="navbar navbar-inverse navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container">
-          <a class="brand" href="#">Project name</a>
+          <a class="brand" href="#" style="position: relative; padding-left: 38px"><img src="img/minilogo.png" alt="" style="height: 18px; position: absolute; left: 0; top: 11px;" /> infinitube</a>
           <form class="navbar-form pull-left" action="search.php" method="get">
             <input class="span2" type="text" placeholder="Title" name="search_query" value="">
             <button type="submit" class="btn">Search</button>
@@ -44,7 +44,7 @@
 
 
     <div class="container">
-      <h1>Project name!</h1>
+      <h1><img src="img/logo.gif" alt="Logo" /></h1>
       <div class="row">
         </div>
       </div>

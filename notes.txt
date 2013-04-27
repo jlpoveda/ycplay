@@ -1,0 +1,11 @@
+notes.txt
+======
+
+Anotaciones de la app.
+
+- Al acabar un vídeo:
+    Se realiza una petición al server que devuelve lo siguiente:
+    - Datos del nuevo vídeo que se cargará en el reproductor.
+    - Listado de Related videos.
+
+Tener en cuenta lo que pasaría si no recibimos ningún vídeo relacionado.
