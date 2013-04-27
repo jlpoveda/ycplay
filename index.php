@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8">
     <title>Play</title>
+    <meta name="google-site-verification" content="aLlx3U0tP3A6EUmC_Cv6vCJ1EELCz5SuUagrKKvolpc" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
