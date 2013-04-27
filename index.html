@@ -18,7 +18,9 @@
     <link id="favicon" href="favicon.ico" rel="icon" type="image/x-icon" />
     <!--<link rel="stylesheet" type="text/css" href="/style_min.css" />-->
     <script src="http://www.google.com/jsapi" type="text/javascript"></script>
-    <script src="infinitube.js?222" type="text/javascript"></script>
+<!--    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>-->
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>    
+    <script src="infinitube.js" type="text/javascript"></script>
 
     <link rel="stylesheet" href="css/infinitube.css">
     <link rel="stylesheet" href="css/bootstrap.css">
@@ -41,10 +43,10 @@
         <div class="span3">
           <div class="btn-toolbar" id="btn-toolbar">
             <div class="btn-group">
-              <a class="btn" href="javascript:History.back()"><i class="icon-step-backward"></i></a>
-              <a class="btn" href="javascript:addToFav('','')"><i class="icon-heart red-icon"></i></a>
-              <a class="btn" href="javascript:playPause()"><i class="icon-play toolPlayPause"></i></a>
-              <a class="btn" href="javascript:goNextVideo()"><i class="icon-step-forward"></i></a>
+              <a class="btn" href="javascript:History.back()"><i id="btn-prev" class="icon-step-backward"></i></a>
+              <a class="btn" href="javascript:toggleToFavlist()"><i id="btn-fav" class="icon-heart"></i></a>
+              <a class="btn" href="javascript:playPause()"><i id="btn-play" class="icon-play toolPlayPause"></i></a>
+              <a class="btn" href="javascript:goNextVideo()"><i id="btn-next" class="icon-step-forward"></i></a>
             </div>
           </div>
         </div>        
@@ -128,7 +130,6 @@
 </footer>
 -->
 <div id="hidden"></div>
-
 <script src="js/bootstrap-tab.js"></script>
 <script src="js/history.js/scripts/bundled/html4+html5/jquery.history.js"></script>
 <script>
