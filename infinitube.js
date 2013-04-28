@@ -133,7 +133,11 @@ function favToJson(){
 }
 function initHistorylist(){
     var p=localStorage.getItem('historylist');
-    historylist=JSON.parse(p);
+    if(!p){
+        historylist=new Array;
+    } else {
+        historylist=JSON.parse(p);
+    }
 }
 function addToHistorylist(videoId){
     if(_(historylist).indexOf(videoId)==-1){
