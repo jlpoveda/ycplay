@@ -101,6 +101,10 @@ function onBodyLoad(){
     videoList=[];
 }
 
+
+/*********************
+        infPLAYER
+**********************/
 function onPlayerStateChange(newState){
     playerState=newState;
     if(pendingDoneWorking&&playerState==1){
@@ -113,9 +117,6 @@ function onPlayerStateChange(newState){
         ga('send', 'event', 'Video', 'play', 'auto', 1);
     }
 }
-function countPlaylistItems(){
-    return playlist.length;
-}
 function loadPlayer(){
     if(!playerLoaded){
         $('#btn-toolbar').show();
@@ -125,27 +126,24 @@ function loadPlayer(){
     }   
     playerLoaded=true;
 }
-function playlistToJson(){
-    return listToJson('playlisttable');
+function onYouTubePlayerReady(playerId){
+    ytplayer=document.getElementById("ytPlayer");
+    ytplayer.addEventListener("onStateChange","onPlayerStateChange");
+
+    setInterval(incPlayedVideos, SECONDS_VIDEO_VIEWED*1000);
 }
-function favToJson(){
-    return JSON.stringify(favlist);
+function goNextVideo(){
+    // Se extrae un elemento del principio del array
+    var tmp = playlist.shift();
+    ga('send', 'event', 'Video', 'play', 'next-button', 1);
+    goVideo(tmp.id, tmp.title);
 }
-function initHistorylist(){
-    var p=localStorage.getItem('historylist');
-    if(!p){
-        historylist=new Array;
-    } else {
-        historylist=JSON.parse(p);
-    }
+function goVideo(videoId, title){
+    History.pushState({'id':videoId,'Title':title},title,'?v='+videoId);
 }
-function addToHistorylist(videoId){
-    if(_(historylist).indexOf(videoId)==-1){
-        historylist.unshift(videoId);
-        historylist = historylist.slice(0,MAX_VIDEO_HISTORY);
-        localStorage.setItem('historylist', JSON.stringify(historylist));
-    }
-}
+/*********************
+        infPLAYLIST
+**********************/
 function listToJson(element){
     var items=$('#'+element+' tr');
     var array=[];
@@ -154,6 +152,12 @@ function listToJson(element){
     });
     return JSON.stringify(array);
 }
+function countPlaylistItems(){
+    return playlist.length;
+}
+function playlistToJson(){
+    return listToJson('playlisttable');
+}
 function getPlaylist(){
     var p=localStorage.getItem('playlist');
     if(p){
@@ -161,7 +165,38 @@ function getPlaylist(){
     } else {
         return new Array();
     }
-//    return playlist;
+}
+function savePlaylist(){
+    localStorage.setItem('playlist', JSON.stringify(playlist));
+}
+function addToPlaylist(videoId, title){
+    playlist.push({'id':videoId,'title':title});
+    var str='<tr id="r'+videoId+'"><td><img src="http://i.ytimg.com/vi/'+videoId+'/default.jpg" class="minithumb" /></td><td><small>'+title+'</small></td><td><i class="playlist-trash icon-trash"></i><i class="icon-play playlist-play"></i></td></tr>';
+    $('#r'+currentVideoId).remove();
+    $('#playlisttable').html($('#playlisttable').html()+str);
+    savePlaylist();
+}
+function _initPlaylist(){
+    var items=getPlaylist();
+    if(items != null){
+        if(items.length>0){
+            $.each(items, function(){
+                addToPlaylist(this.id, this.title);
+            });
+        }
+    }
+}
+function removeFromPlaylist(videoId){
+    playlist = _(playlist).reject(function(el) { return el.id === videoId});
+    $('#r'+videoId).fadeOut(function(){
+        savePlaylist();    
+    }).remove();
+}
+/*********************
+        infFAVLIST
+**********************/        
+function favToJson(){
+    return JSON.stringify(favlist);
 }
 function getFavlist(){
     var p=localStorage.getItem('favlist');
@@ -170,26 +205,9 @@ function getFavlist(){
     } else {
         return new Array();
     }
-//    return favlist;
 }
 function saveFav(){
     localStorage.setItem('favlist', JSON.stringify(favlist));
-}
-function savePlaylist(){
-    localStorage.setItem('playlist', JSON.stringify(playlist));
-}
-function incPlayedVideos(){
-    if(ytplayer.getCurrentTime()>SECONDS_VIDEO_VIEWED && viewedVideo==false){
-        playedVideos++;
-        localStorage.setItem('playedVideos', playedVideos);
-        viewedVideo=true;
-    }
-}
-function initPlayedVideos(){
-    var tmp = localStorage.getItem('playedVideos');
-    if(!tmp){
-        localStorage.setItem('playedVideos', playedVideos);
-    }
 }
 function _initFavlist(){
     var items=getFavlist();
@@ -197,16 +215,6 @@ function _initFavlist(){
         if(items.length>0){
             $.each(items, function(){
                 addToFavlist(this.id, this.title);
-            });
-        }
-    }
-}
-function _initPlaylist(){
-    var items=getPlaylist();
-    if(items != null){
-        if(items.length>0){
-            $.each(items, function(){
-                addToPlaylist(this.id, this.title);
             });
         }
     }
@@ -225,12 +233,6 @@ function removeFromFavlist(videoId){
         saveFav();    
     }).remove();
 }
-function removeFromPlaylist(videoId){
-    playlist = _(playlist).reject(function(el) { return el.id === videoId});
-    $('#r'+videoId).fadeOut(function(){
-        savePlaylist();    
-    }).remove();
-}
 function addToFavlist(videoId, title){
     if(videoId==''){
         videoId=currentVideo.id;
@@ -247,30 +249,44 @@ function addToFavlist(videoId, title){
     $('#btn-fav').addClass('red-icon');
     saveFav();
 }
-function addToPlaylist(videoId, title){
-    playlist.push({'id':videoId,'title':title});
-    var str='<tr id="r'+videoId+'"><td><img src="http://i.ytimg.com/vi/'+videoId+'/default.jpg" class="minithumb" /></td><td><small>'+title+'</small></td><td><i class="playlist-trash icon-trash"></i><i class="icon-play playlist-play"></i></td></tr>';
-    $('#r'+currentVideoId).remove();
-    $('#playlisttable').html($('#playlisttable').html()+str);
-    savePlaylist();
-}
-function onYouTubePlayerReady(playerId){
-    ytplayer=document.getElementById("ytPlayer");
-    ytplayer.addEventListener("onStateChange","onPlayerStateChange");
 
-    setInterval(incPlayedVideos, SECONDS_VIDEO_VIEWED*1000);
+/*********************
+        infHISTORY
+**********************/
+function initHistorylist(){
+    var p=localStorage.getItem('historylist');
+    if(!p){
+        historylist=new Array;
+    } else {
+        historylist=JSON.parse(p);
+    }
 }
-function goNextVideo(){
-    var tmp = playlist.shift();
-    // var id=$('#playlisttable tr').first().attr('id').substring(1);
-    // var title=$('#playlisttable tr').first().find('small').html();
-    ga('send', 'event', 'Video', 'play', 'next-button', 1);
-
-    History.pushState({'id':tmp.id,'Title':tmp.title},tmp.title,'?v='+tmp.id);
+function addToHistorylist(videoId){
+    if(_(historylist).indexOf(videoId)==-1){
+        historylist.unshift(videoId);
+        historylist = historylist.slice(0,MAX_VIDEO_HISTORY);
+        localStorage.setItem('historylist', JSON.stringify(historylist));
+    }
 }
-function goVideo(videoId, title){
-    History.pushState({'id':videoId,'Title':title},title,'?v='+videoId);
+/**********************
+        infADS
+***********************/        
+function incPlayedVideos(){
+    if(ytplayer.getCurrentTime()>SECONDS_VIDEO_VIEWED && viewedVideo==false){
+        playedVideos++;
+        localStorage.setItem('playedVideos', playedVideos);
+        viewedVideo=true;
+    }
 }
+function initPlayedVideos(){
+    var tmp = localStorage.getItem('playedVideos');
+    if(!tmp){
+        localStorage.setItem('playedVideos', playedVideos);
+    }
+}
+/**********************
+        infSEARCH
+***********************/        
 function doSearch(){
     if(xhrWorking){
         pendingSearch=true;
@@ -311,6 +327,9 @@ function scrollToElement(element){
         scrollTop: $(element).offset().top
     }, 1000);                
 }
+/**********************
+        infVIDEO
+***********************/        
 function getRelatedVideos(videoId, page, init){
     if(!page){
         page = 0;
@@ -396,17 +415,22 @@ function selectNextMusicVideo(lastfmData, artist){
                 }
             }
         }
+        // Si el video ya ha sonado, la probabilidad de que vuelva a ser seleccionado es ínfima
+        if(_(historylist).indexOf(videoItems[i].id) != -1){
+            prob=prob/5;
+        }
         videosTmp[i]={'id':videoItems[i].id,'prob':prob,'title':videoItems[i].title};
         if(maxProb<prob){
             maxProb=prob;
         }
     }
     rndProb=Math.floor((Math.random()*maxProb)+1);
+    console.log(videosTmp);
     i=0;
     do {
         rndItem=Math.floor((Math.random()*numItems));
         i++;
-    }while(videosTmp[rndItem].prob<rndProb || i<60);
+    }while(videosTmp[rndItem].prob<rndProb || i<60); //Como mucho el bucle se recorrerá 60 veces
     addToPlaylist(videosTmp[rndItem].id,videosTmp[rndItem].title);
 }
 function selectNextVideo(videos, currentVideoInfo){
