@@ -2,6 +2,9 @@ google.load("swfobject","2.2");
 google.load("jquery","1");
 google.load("jqueryui","1");
 var INITIAL_VID_THUMBS=24;
+var MAX_VIDEO_HISTORY=30;
+// Segundos que han de transcurrir para que un video se marque como visto
+var SECONDS_VIDEO_VIEWED=15;
 var currentVideoId = '';
 var videoItems = {};
 var currentVideo = {};
@@ -11,8 +14,16 @@ var xhrWorking = false;
 var ytplayer = '';
 var playerLoaded = false;
 var init = true;
+// Almacena el número de vídeos que se han visto. Se resetea al mostrar un anuncio
+var playedVideos = 0;
+// Indica si se ha llegado al segundo 15 del vídeo
+var viewedVideo=false;
+// Array donde se guarda el histórico de videos vistos
+var historylist=[];
 
 function _run(){
+    initPlayedVideos();
+    initHistorylist();
     $(document).on('click', '.playlist-trash', function(event){
         if(countPlaylistItems() > 1){
             var id = $(this).parent().parent().attr('id');
@@ -23,6 +34,9 @@ function _run(){
         var id=$(this).parent().parent().attr('id').substring(1);
         var title=$(this).parent().parent().find('small').html();
         ga('send', 'event', 'Video', 'play', 'playlist-play', 1);
+        playlist = _(playlist).reject(function(el) { return el.id === id});
+        // savePlaylist();
+        //removeFromPlaylist(id);
         goVideo(id, title);
     }).on('click', '.videoinfotitle a', function(e){
         e.preventDefault();
@@ -86,6 +100,7 @@ function onBodyLoad(){
     hashTimeout=false;
     videoList=[];
 }
+
 function onPlayerStateChange(newState){
     playerState=newState;
     if(pendingDoneWorking&&playerState==1){
@@ -115,6 +130,17 @@ function playlistToJson(){
 }
 function favToJson(){
     return JSON.stringify(favlist);
+}
+function initHistorylist(){
+    var p=localStorage.getItem('historylist');
+    historylist=JSON.parse(p);
+}
+function addToHistorylist(videoId){
+    if(_(historylist).indexOf(videoId)==-1){
+        historylist.unshift(videoId);
+        historylist = historylist.slice(0,MAX_VIDEO_HISTORY);
+        localStorage.setItem('historylist', JSON.stringify(historylist));
+    }
 }
 function listToJson(element){
     var items=$('#'+element+' tr');
@@ -148,7 +174,19 @@ function saveFav(){
 function savePlaylist(){
     localStorage.setItem('playlist', JSON.stringify(playlist));
 }
-
+function incPlayedVideos(){
+    if(ytplayer.getCurrentTime()>SECONDS_VIDEO_VIEWED && viewedVideo==false){
+        playedVideos++;
+        localStorage.setItem('playedVideos', playedVideos);
+        viewedVideo=true;
+    }
+}
+function initPlayedVideos(){
+    var tmp = localStorage.getItem('playedVideos');
+    if(!tmp){
+        localStorage.setItem('playedVideos', playedVideos);
+    }
+}
 function _initFavlist(){
     var items=getFavlist();
     if(items != null){
@@ -215,13 +253,16 @@ function addToPlaylist(videoId, title){
 function onYouTubePlayerReady(playerId){
     ytplayer=document.getElementById("ytPlayer");
     ytplayer.addEventListener("onStateChange","onPlayerStateChange");
+
+    setInterval(incPlayedVideos, SECONDS_VIDEO_VIEWED*1000);
 }
 function goNextVideo(){
-    var id=$('#playlisttable tr').first().attr('id').substring(1);
-    var title=$('#playlisttable tr').first().find('small').html();
+    var tmp = playlist.shift();
+    // var id=$('#playlisttable tr').first().attr('id').substring(1);
+    // var title=$('#playlisttable tr').first().find('small').html();
     ga('send', 'event', 'Video', 'play', 'next-button', 1);
 
-    History.pushState({'id':id,'Title':title},title,'?v='+id);
+    History.pushState({'id':tmp.id,'Title':tmp.title},tmp.title,'?v='+tmp.id);
 }
 function goVideo(videoId, title){
     History.pushState({'id':videoId,'Title':title},title,'?v='+videoId);
@@ -471,8 +512,11 @@ function loadAndPlayVideo(videoId,bypassXhrWorkingCheck){
     $('#index').slideUp('fast');
     if(ytplayer){
         xhrWorking=true;
+        viewedVideo = false;
         ytplayer.loadVideoById(videoId);
         currentVideoId=videoId;
+        // Se añade el video que va a sonar al histórico de videos reproducidos
+        addToHistorylist(videoId);
         pendingDoneWorking=true;
         if(_.findWhere(favlist, {id:videoId})){
             $('#btn-fav').addClass('red-icon');

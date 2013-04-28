@@ -15,11 +15,16 @@
     <meta property="fb:admins" content="jlpoveda"/>
     <meta property="og:description" content="Infinite YouTube watching."/>
 
+    <meta property="og:video" content="http://example.com/movie.swf" />
+    <meta property="og:video:type" content="application/x-shockwave-flash" />
+    <meta property="og:video:width" content="400" />
+    <meta property="og:video:height" content="300" />
+
     <link id="favicon" href="img/favicon.png" rel="icon" type="image/x-icon" />
     <!--<link rel="stylesheet" type="text/css" href="/style_min.css" />-->
     <script src="http://www.google.com/jsapi" type="text/javascript"></script>
 <!--    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>-->
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>    
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
     <script src="infinitube.js" type="text/javascript"></script>
 
     <link rel="stylesheet" href="css/infinitube.css">
@@ -33,18 +38,19 @@
         <div class="span1">
           <a href="index.html" id="homelink"><img src="img/infinitube-mini.png" alt="Infinitube" /></a>
         </div>
-        <div class="span8" class="controls">
+        <div class="span7" class="controls">
           <form id="formsearch">
             <div class="input-prepend">
                 <span class="add-on"><i id="searchButton" class="icon-search"></i></span><input class="span4" autocomplete="on" id="searchBox" type="text" placeholder="Search" />
             </div>
           </form>
         </div>
-        <div class="span3">
+        <div class="span4">
           <div class="btn-toolbar" id="btn-toolbar">
             <div class="btn-group">
               <a class="btn" href="javascript:History.back()"><i id="btn-prev" class="icon-step-backward"></i></a>
               <a class="btn" href="javascript:toggleToFavlist()"><i id="btn-fav" class="icon-heart"></i></a>
+              <a class="btn disabled" href="share-facebook.php"><i id="btn-fav" class="icon-thumbs-up"></i></a>
               <a class="btn" href="javascript:playPause()"><i id="btn-play" class="icon-play toolPlayPause"></i></a>
               <a class="btn" href="javascript:goNextVideo()"><i id="btn-next" class="icon-step-forward"></i></a>
             </div>
