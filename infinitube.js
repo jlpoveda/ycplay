@@ -21,6 +21,8 @@ var viewedVideo=false;
 // Array donde se guarda el histórico de videos vistos
 var historylist=[];
 
+var pendingSearch=false;
+
 function _run(){
     initPlayedVideos();
     initHistorylist();
@@ -480,9 +482,9 @@ function updateVideoDisplay(videos){
 }
 function doneWorking(){
     xhrWorking=false;
-    if(pendingSearch){
-        pendingSearch=false;
-    }
+    // if(pendingSearch){
+    //     pendingSearch=false;
+    // }
     var searchBox=$('#searchBox');
     searchBox.attr('class','statusPlaying');
 }
